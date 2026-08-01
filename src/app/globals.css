@@ -59,7 +59,7 @@ input {
 }
 
 .home-page {
-  width: min(1280px, 100%);
+  width: min(1240px, 100%);
   min-height: 100dvh;
   margin: 0 auto;
   padding: 0 clamp(20px, 4vw, 52px) clamp(28px, 5vw, 56px);
@@ -91,12 +91,12 @@ input {
 .game-menu {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 24px);
-  padding-top: clamp(44px, 6vw, 68px);
+  gap: clamp(22px, 2.4vw, 30px);
+  padding-top: clamp(48px, 6vw, 72px);
 }
 
 .game-card {
-  height: clamp(280px, 26vw, 320px);
+  height: clamp(270px, 23vw, 292px);
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -132,7 +132,7 @@ input {
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
-  padding: clamp(24px, 2.6vw, 32px);
+  padding: clamp(25px, 2.4vw, 32px);
 }
 
 .game-card-name {
@@ -147,7 +147,7 @@ input {
 .game-card-copy h2 {
   max-width: 6em;
   margin: 0;
-  font-size: clamp(34px, 3.2vw, 44px);
+  font-size: clamp(36px, 3vw, 44px);
   font-weight: 720;
   letter-spacing: -0.055em;
   line-height: 0.96;
@@ -287,6 +287,48 @@ input {
 .nonogram-pixel-three {
   bottom: 22%;
   left: 10%;
+  background: #df684d;
+}
+
+.game-card-circle-cat {
+  color: #26362f;
+  background: #f0d775;
+}
+
+.game-card-circle-cat .game-card-art {
+  color: #287b55;
+  background: rgba(255, 252, 228, 0.48);
+}
+
+.game-card-circle-cat .game-card-main-icon {
+  width: 68%;
+  height: 68%;
+  right: 16%;
+  bottom: 15%;
+}
+
+.circle-cat-route-node {
+  width: 19px;
+  height: 19px;
+  position: absolute;
+  border: 3px solid #287b55;
+  border-radius: 50%;
+  background: #d9efdf;
+}
+
+.circle-cat-route-node-one {
+  top: 13%;
+  left: 12%;
+}
+
+.circle-cat-route-node-two {
+  top: 23%;
+  right: 10%;
+}
+
+.circle-cat-route-node-three {
+  right: 14%;
+  bottom: 11%;
   background: #df684d;
 }
 
@@ -487,6 +529,21 @@ input {
 
   .nonogram-pixel-two {
     background: #f4eee5;
+  }
+
+  .game-card-circle-cat {
+    color: #f5f3de;
+    background: #554921;
+  }
+
+  .game-card-circle-cat .game-card-art {
+    color: #8bd0a7;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .circle-cat-route-node {
+    border-color: #8bd0a7;
+    background: #355c46;
   }
 }
 

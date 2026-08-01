@@ -20,6 +20,13 @@ export const games = [
     href: "/games/nonogram",
     art: "pixel",
   },
+  {
+    slug: "circle-cat",
+    title: "圈小猫",
+    englishTitle: "Circle the Cat",
+    href: "/games/circle-cat",
+    art: "cat",
+  },
 ] as const;
 
 export type Game = (typeof games)[number];

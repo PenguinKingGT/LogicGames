@@ -22,6 +22,10 @@ export default defineConfig({
         "src/games/nonogram/audio/*.ts",
         "src/games/nonogram/app/game-reducer.ts",
         "src/games/nonogram/persistence/*.ts",
+        "src/games/circle-cat/domain/**/*.ts",
+        "src/games/circle-cat/audio/*.ts",
+        "src/games/circle-cat/app/game-reducer.ts",
+        "src/games/circle-cat/persistence/*.ts",
       ],
       exclude: [
         "src/**/*.test.{ts,tsx}",

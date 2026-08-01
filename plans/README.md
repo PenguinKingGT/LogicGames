@@ -24,7 +24,8 @@ written, so there is no target commit SHA. The source snapshots are:
 /games/polymine           one full-screen Client Component game route
                                   |
                                   +-- Phaser loaded dynamically in browser only
-/games/nonogram           one DOM-based Client Component game route (planned)
+/games/nonogram           one DOM-based Client Component game route
+/games/circle-cat         one DOM-based Client Component pursuit game
 ```
 
 Application-owned code lives under `src/`; migrated game code is namespaced
@@ -42,6 +43,7 @@ boundaries.
 | 003 | Migrate PolyMine with a client-only Phaser boundary | P1 | L | 001 | DONE |
 | 004 | Verify the combined site and close migration gaps | P1 | M | 002, 003 | DONE |
 | 005 | Add a complete Nonogram game as the third standalone route | P1 | L | 004 | DONE |
+| 006 | Add 圈小猫 as the fourth standalone game | P1 | L | 005 | DONE |
 
 Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 `REJECTED (<reason>)`.
@@ -57,6 +59,10 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
   lifecycle isolation and the complete production bundle.
 - 005 extends the verified route/catalog pattern after 004. Its pure clue
   engine, uniqueness validator, and reducer must land before UI integration.
+- 006 extends the collection with a pure offset-grid/BFS engine, a DOM board,
+  synthesized audio, and one documented CC0 cat animation. It lands after 005
+  so the current catalog, scoped CSS, persistence, and audio conventions are
+  treated as the implementation baseline.
 
 ## Architectural decisions
 
@@ -78,6 +84,9 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - Implement Nonogram as a DOM grid with a pure reducer. Keep its test-only
   uniqueness solver out of the route import graph and do not add a renderer or
   state-management dependency.
+- Implement 圈小猫 as an offset DOM grid backed by pure BFS pathfinding and a
+  deterministic setup generator. Source only the cat idle/run animation from
+  the network; build all remaining UI in CSS/SVG and all sound with Web Audio.
 - Isolate game CSS and CSS variables by a game root namespace. A game may not
   assign its palette globally on `:root`, `html`, or `body`.
 - Do not enable `output: "export"` until a deployment target requires it. The
@@ -107,3 +116,6 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
   puzzles guarded by an exactly-one-solution test.
 - Render Nonogram with Canvas/Phaser: rejected because a DOM grid provides
   better clue layout, focus semantics, keyboard access, and smaller route cost.
+- Copy a complete Circle-the-Cat project or download a full game/audio asset
+  pack: rejected. Only the documented CC0 cat movement animation is reused;
+  rules, UI, board art, and sound remain local and independently tested.

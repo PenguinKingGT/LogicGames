@@ -20,5 +20,9 @@ describe("home menu", () => {
       .toHaveAttribute("href", "/games/nonogram");
     expect(screen.getByRole("link", { name: "在新标签页打开数织" }))
       .toHaveAttribute("target", "_blank");
+    expect(screen.getByRole("link", { name: "在新标签页打开圈小猫" }))
+      .toHaveAttribute("href", "/games/circle-cat");
+    expect(screen.getByRole("link", { name: "在新标签页打开圈小猫" }))
+      .toHaveAttribute("target", "_blank");
   });
 });

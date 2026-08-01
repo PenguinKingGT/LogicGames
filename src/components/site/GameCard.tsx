@@ -1,5 +1,6 @@
 import {
   ArrowUpRight,
+  Cat,
   CirclesFour,
   GridNine,
   Hexagon,
@@ -57,6 +58,15 @@ function GameCardArt({ art }: { art: Game["art"] }) {
           <span className="nonogram-pixel nonogram-pixel-one" />
           <span className="nonogram-pixel nonogram-pixel-two" />
           <span className="nonogram-pixel nonogram-pixel-three" />
+        </>
+      );
+    case "cat":
+      return (
+        <>
+          <Cat className="game-card-main-icon" weight="duotone" />
+          <span className="circle-cat-route-node circle-cat-route-node-one" />
+          <span className="circle-cat-route-node circle-cat-route-node-two" />
+          <span className="circle-cat-route-node circle-cat-route-node-three" />
         </>
       );
   }

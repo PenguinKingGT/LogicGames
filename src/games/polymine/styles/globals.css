@@ -71,7 +71,7 @@ input:disabled {
   opacity: 0.45;
 }
 
-.app-shell {
+:scope.app-shell {
   width: min(1180px, 100%);
   min-width: 320px;
   min-height: 100dvh;
@@ -87,7 +87,7 @@ input:disabled {
     var(--background);
 }
 
-.app-shell[data-view="game"] {
+:scope.app-shell[data-view="game"] {
   width: min(1280px, 100%);
 }
 
@@ -820,7 +820,7 @@ input:disabled {
   font-size: 22px;
 }
 
-.dialog-overlay {
+:scope.dialog-overlay {
   position: fixed;
   inset: 0;
   z-index: 50;
@@ -829,7 +829,7 @@ input:disabled {
   animation: fade-in 160ms ease-out;
 }
 
-.dialog-content {
+:scope.dialog-content {
   width: min(460px, calc(100vw - 32px));
   max-height: calc(100dvh - 40px);
   position: fixed;
@@ -1123,7 +1123,7 @@ input:disabled {
 }
 
 @media (max-width: 720px) {
-  .app-shell {
+  :scope.app-shell {
     padding: 8px 10px 10px;
   }
 
@@ -1271,7 +1271,7 @@ input:disabled {
     display: none;
   }
 
-  .dialog-content {
+  :scope.dialog-content {
     width: calc(100vw - 20px);
     max-height: calc(100dvh - 20px);
     padding: 22px 18px;

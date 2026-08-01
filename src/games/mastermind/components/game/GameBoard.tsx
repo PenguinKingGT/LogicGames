@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from "react"
 import { CurrentGuess } from "@/games/mastermind/components/game/CurrentGuess"
 import { GuessRow } from "@/games/mastermind/components/game/GuessRow"
 import { MAX_ATTEMPTS } from "@/games/mastermind/game/config"
@@ -48,4 +49,3 @@ export function GameBoard({ history, currentGuess, invalid }: GameBoardProps) {
     </section>
   )
 }
-import { useLayoutEffect, useRef } from "react"

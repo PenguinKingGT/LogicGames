@@ -76,8 +76,10 @@ input {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-weight: 760;
-  letter-spacing: -0.025em;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  font-weight: 720;
+  letter-spacing: 0.08em;
 }
 
 .home-brand svg {

@@ -8,7 +8,7 @@ export default function Home() {
       <header className="home-nav">
         <span className="home-brand">
           <Shapes aria-hidden="true" weight="duotone" />
-          逻辑游乐场
+          PUZZLE HOUSE
         </span>
       </header>
 

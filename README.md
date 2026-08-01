@@ -1,4 +1,4 @@
-# Logic Games
+# PUZZLE HOUSE
 
 一个使用 Next.js 构建的轻量逻辑小游戏合集。目前包含：
 

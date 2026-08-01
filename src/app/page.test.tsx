@@ -6,6 +6,7 @@ describe("home menu", () => {
   it("links to all standalone game pages", () => {
     render(<Home />);
 
+    expect(screen.getByText("PUZZLE HOUSE")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1, name: "选择游戏" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "在新标签页打开彩码谜局" }))
       .toHaveAttribute("href", "/games/mastermind");

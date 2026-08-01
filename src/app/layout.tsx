@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "逻辑游乐场",
-    template: "%s | 逻辑游乐场",
+    default: "PUZZLE HOUSE",
+    template: "%s | PUZZLE HOUSE",
   },
   description: "随时开一局的轻量逻辑小游戏合集。",
 };

@@ -1,0 +1,771 @@
+.nonogram-game,
+.nonogram-portal {
+  color-scheme: light;
+  font-family: var(--font-geist), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  color: #262824;
+  --ng-background: #ebe9e3;
+  --ng-paper: #fbfaf6;
+  --ng-paper-deep: #f1efe8;
+  --ng-ink: #262824;
+  --ng-muted: #70736d;
+  --ng-line: #c9cac3;
+  --ng-line-strong: #777b73;
+  --ng-accent: #d85d45;
+  --ng-accent-dark: #a23f2d;
+  --ng-focus: rgba(216, 93, 69, 0.3);
+  --ng-shadow: rgba(65, 62, 52, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .nonogram-game,
+  .nonogram-portal {
+    color-scheme: dark;
+    color: #eeeee8;
+    --ng-background: #1d201e;
+    --ng-paper: #292d2a;
+    --ng-paper-deep: #232724;
+    --ng-ink: #eeeee8;
+    --ng-muted: #b1b4ad;
+    --ng-line: #4a504b;
+    --ng-line-strong: #969c96;
+    --ng-accent: #ef8068;
+    --ng-accent-dark: #c75f49;
+    --ng-focus: rgba(239, 128, 104, 0.35);
+    --ng-shadow: rgba(5, 7, 6, 0.34);
+  }
+}
+
+@scope (.nonogram-game, .nonogram-portal) {
+  * {
+    box-sizing: border-box;
+  }
+
+  button {
+    color: inherit;
+    font: inherit;
+  }
+
+  button:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid var(--ng-focus);
+    outline-offset: 3px;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  :scope.nonogram-stage {
+    min-width: 320px;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    padding: max(14px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    background:
+      linear-gradient(rgba(68, 67, 61, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(68, 67, 61, 0.035) 1px, transparent 1px),
+      var(--ng-background);
+    background-size: 24px 24px;
+  }
+
+  .nonogram-skip-link {
+    position: fixed;
+    z-index: 60;
+    top: 10px;
+    left: 12px;
+    padding: 10px 14px;
+    border-radius: 9px;
+    color: #fff8f4;
+    background: var(--ng-accent-dark);
+    transform: translateY(-150%);
+    transition: transform 160ms ease;
+  }
+
+  .nonogram-skip-link:focus {
+    transform: translateY(0);
+  }
+
+  .nonogram-shell {
+    width: min(1120px, 100%);
+    min-height: calc(100dvh - 32px);
+    margin: 0 auto;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    gap: 12px;
+  }
+
+  .nonogram-header {
+    min-height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 4px;
+  }
+
+  .nonogram-brand span {
+    color: var(--ng-accent);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.16em;
+  }
+
+  .nonogram-brand h1 {
+    margin: 1px 0 0;
+    font-size: clamp(26px, 3vw, 34px);
+    font-weight: 760;
+    letter-spacing: -0.055em;
+    line-height: 1;
+  }
+
+  .nonogram-header-tools {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .difficulty-switch {
+    display: flex;
+    padding: 4px;
+    border: 1px solid var(--ng-line);
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--ng-paper) 82%, transparent);
+  }
+
+  .difficulty-switch button {
+    min-height: 34px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 7px;
+    color: var(--ng-muted);
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    transition: color 160ms ease, background-color 160ms ease, transform 120ms ease;
+  }
+
+  .difficulty-switch button[aria-pressed="true"] {
+    color: var(--ng-ink);
+    background: var(--ng-paper);
+    box-shadow: 0 2px 8px var(--ng-shadow);
+  }
+
+  .difficulty-switch button:active,
+  .icon-button:active,
+  .tool-button:active,
+  .primary-button:active,
+  .secondary-button:active,
+  .danger-button:active {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  .nonogram-time {
+    min-width: 66px;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .icon-button {
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--ng-line);
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    background: color-mix(in srgb, var(--ng-paper) 84%, transparent);
+    cursor: pointer;
+    transition: background-color 160ms ease, transform 120ms ease;
+  }
+
+  .icon-button:hover {
+    background: var(--ng-paper);
+  }
+
+  .icon-button svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .nonogram-play {
+    min-height: 0;
+    padding: 14px clamp(10px, 2.2vw, 26px) 20px;
+    border-radius: 18px;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    background: var(--ng-paper);
+    box-shadow: 0 18px 55px var(--ng-shadow);
+  }
+
+  .puzzle-meta {
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    color: var(--ng-muted);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+  }
+
+  #nonogram-board {
+    min-height: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .puzzle-frame {
+    max-width: 100%;
+    max-height: 100%;
+    overflow: auto;
+    padding: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ng-line-strong) transparent;
+  }
+
+  .puzzle-layout {
+    --cell-size: 34px;
+    --row-clue-width: 76px;
+    width: max-content;
+    display: grid;
+    grid-template-columns: var(--row-clue-width) calc(var(--board-width) * var(--cell-size));
+    grid-template-rows: max-content calc(var(--board-height) * var(--cell-size));
+    user-select: none;
+  }
+
+  .puzzle-frame[data-size="5"] .puzzle-layout {
+    --cell-size: clamp(40px, calc((100vw - 108px) / 5), 56px);
+  }
+
+  .puzzle-frame[data-size="10"] .puzzle-layout {
+    --cell-size: clamp(25px, calc((100vw - 108px) / 10), 40px);
+  }
+
+  .puzzle-frame[data-size="15"] .puzzle-layout {
+    --cell-size: clamp(18px, calc((100vw - 84px) / 15), 29px);
+  }
+
+  .clue-corner {
+    min-height: 56px;
+    display: grid;
+    place-items: end start;
+    padding: 0 10px 9px 0;
+    color: var(--ng-muted);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 10px;
+  }
+
+  .column-clues {
+    display: grid;
+    grid-template-columns: repeat(var(--board-width), var(--cell-size));
+    align-items: end;
+  }
+
+  .column-clue {
+    min-width: 0;
+    padding: 4px 1px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1px;
+    color: var(--ng-ink);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: clamp(8px, calc(var(--cell-size) * 0.34), 11px);
+    font-weight: 720;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .row-clues {
+    display: grid;
+    grid-template-rows: repeat(var(--board-height), var(--cell-size));
+  }
+
+  .row-clue {
+    min-height: 0;
+    padding-right: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: clamp(3px, calc(var(--cell-size) * 0.18), 7px);
+    color: var(--ng-ink);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: clamp(8px, calc(var(--cell-size) * 0.34), 11px);
+    font-weight: 720;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .column-clue[data-solved="true"],
+  .row-clue[data-solved="true"] {
+    color: var(--ng-accent);
+    opacity: 0.58;
+  }
+
+  .nonogram-cells {
+    display: grid;
+    grid-template-columns: repeat(var(--board-width), var(--cell-size));
+    grid-template-rows: repeat(var(--board-height), var(--cell-size));
+    border-top: 2px solid var(--ng-line-strong);
+    border-left: 2px solid var(--ng-line-strong);
+    background: var(--ng-line);
+    touch-action: none;
+  }
+
+  .nonogram-cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-right: 1px solid var(--ng-line);
+    border-bottom: 1px solid var(--ng-line);
+    display: grid;
+    place-items: center;
+    background: var(--ng-paper);
+    cursor: crosshair;
+    transition: background-color 90ms ease, color 90ms ease;
+  }
+
+  .nonogram-cell[data-major-column="true"] {
+    border-right: 2px solid var(--ng-line-strong);
+  }
+
+  .nonogram-cell[data-major-row="true"] {
+    border-bottom: 2px solid var(--ng-line-strong);
+  }
+
+  .nonogram-cell[data-state="filled"] {
+    background: var(--ng-ink);
+  }
+
+  .nonogram-cell[data-state="crossed"] {
+    color: var(--ng-muted);
+    background: var(--ng-paper-deep);
+  }
+
+  .nonogram-cell[data-state="crossed"] span {
+    font-size: clamp(11px, calc(var(--cell-size) * 0.58), 21px);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .nonogram-cell:hover:not([data-state="filled"]) {
+    background: color-mix(in srgb, var(--ng-accent) 9%, var(--ng-paper));
+  }
+
+  .nonogram-cell:focus-visible {
+    position: relative;
+    z-index: 2;
+    outline-offset: -3px;
+  }
+
+  .tool-dock {
+    min-height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 8px 12px;
+    border: 1px solid color-mix(in srgb, var(--ng-line) 80%, transparent);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--ng-paper) 90%, transparent);
+    box-shadow: 0 10px 28px var(--ng-shadow);
+  }
+
+  .tool-group {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tool-button {
+    min-height: 46px;
+    padding: 0 11px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--ng-muted);
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 120ms ease;
+  }
+
+  .tool-button:hover {
+    color: var(--ng-ink);
+    background: var(--ng-paper-deep);
+  }
+
+  .tool-button[aria-pressed="true"] {
+    border-color: color-mix(in srgb, var(--ng-accent) 40%, var(--ng-line));
+    color: var(--ng-accent-dark);
+    background: color-mix(in srgb, var(--ng-accent) 11%, var(--ng-paper));
+  }
+
+  .tool-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .tool-button[data-tool="filled"] svg {
+    color: var(--ng-ink);
+  }
+
+  .tool-button kbd {
+    min-width: 20px;
+    padding: 2px 4px;
+    border: 1px solid var(--ng-line);
+    border-radius: 5px;
+    color: var(--ng-muted);
+    background: var(--ng-paper);
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 8px;
+    text-align: center;
+  }
+
+  .tool-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--ng-line);
+  }
+
+  .restart-button {
+    min-height: 44px;
+    padding: 0 10px;
+    border: 0;
+    color: var(--ng-muted);
+    background: transparent;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .restart-button:hover {
+    color: var(--ng-accent-dark);
+  }
+
+  .nonogram-status {
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  :scope.nonogram-dialog-overlay {
+    position: fixed;
+    z-index: 40;
+    inset: 0;
+    background: rgba(27, 29, 26, 0.46);
+    backdrop-filter: blur(5px);
+    animation: ng-fade 160ms ease-out;
+  }
+
+  :scope.nonogram-dialog {
+    width: min(440px, calc(100vw - 28px));
+    max-height: calc(100dvh - 28px);
+    position: fixed;
+    z-index: 50;
+    left: 50%;
+    top: 50%;
+    overflow: auto;
+    padding: 28px;
+    border: 1px solid var(--ng-line);
+    border-radius: 16px;
+    color: var(--ng-ink);
+    background: var(--ng-paper);
+    box-shadow: 0 28px 80px rgba(20, 21, 19, 0.3);
+    transform: translate(-50%, -50%);
+    animation: ng-pop 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nonogram-dialog h2 {
+    margin: 0 40px 7px 0;
+    font-size: 25px;
+    letter-spacing: -0.045em;
+  }
+
+  .nonogram-dialog > p {
+    margin: 0;
+    color: var(--ng-muted);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .nonogram-dialog-close {
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    border: 0;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .nonogram-dialog-close:hover {
+    background: var(--ng-paper-deep);
+  }
+
+  .nonogram-dialog-close svg {
+    width: 17px;
+  }
+
+  .help-list {
+    margin-top: 22px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .help-list div {
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    background: var(--ng-paper-deep);
+  }
+
+  .help-list strong {
+    color: var(--ng-accent-dark);
+    font-size: 12px;
+  }
+
+  .help-list p,
+  .keyboard-note {
+    margin: 0;
+    color: var(--ng-muted);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .keyboard-note {
+    margin-top: 16px;
+  }
+
+  .result-dialog {
+    text-align: center;
+  }
+
+  .result-dialog h2 {
+    margin-right: 0;
+  }
+
+  .result-icon {
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 15px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    color: #fff8f4;
+    background: var(--ng-accent);
+    box-shadow: 0 5px 0 var(--ng-accent-dark);
+  }
+
+  .result-icon svg {
+    width: 27px;
+    height: 27px;
+  }
+
+  .dialog-actions {
+    margin-top: 23px;
+    display: flex;
+    justify-content: center;
+    gap: 9px;
+  }
+
+  .primary-button,
+  .secondary-button,
+  .danger-button {
+    min-height: 46px;
+    padding: 0 19px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 750;
+    transition: background-color 160ms ease, transform 120ms ease;
+  }
+
+  .primary-button,
+  .danger-button {
+    border: 1px solid var(--ng-accent-dark);
+    color: #fff8f4;
+    background: var(--ng-accent-dark);
+  }
+
+  .primary-button:hover,
+  .danger-button:hover {
+    background: var(--ng-accent);
+  }
+
+  .secondary-button {
+    border: 1px solid var(--ng-line);
+    color: var(--ng-ink);
+    background: var(--ng-paper-deep);
+  }
+
+  @keyframes ng-fade {
+    from { opacity: 0; }
+  }
+
+  @keyframes ng-pop {
+    from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
+  }
+
+  @media (max-width: 720px) {
+    :scope.nonogram-stage {
+      padding-inline: 8px;
+    }
+
+    .nonogram-shell {
+      min-height: calc(100dvh - 24px);
+      gap: 8px;
+    }
+
+    .nonogram-header {
+      min-height: 58px;
+    }
+
+    .nonogram-header-tools {
+      gap: 4px;
+    }
+
+    .difficulty-switch button {
+      min-width: 38px;
+      padding-inline: 7px;
+      font-size: 10px;
+    }
+
+    .nonogram-time {
+      min-width: 50px;
+      font-size: 11px;
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+    }
+
+    .nonogram-play {
+      padding: 8px 4px 12px;
+      border-radius: 13px;
+    }
+
+    .puzzle-layout {
+      --row-clue-width: 56px;
+    }
+
+    .puzzle-frame {
+      padding: 4px;
+    }
+
+    .tool-dock {
+      min-height: 62px;
+      padding: 7px;
+      gap: 4px;
+      overflow-x: auto;
+      justify-content: flex-start;
+      border-radius: 13px;
+    }
+
+    .tool-button {
+      min-height: 44px;
+      padding-inline: 9px;
+    }
+
+    .tool-button kbd,
+    .tool-divider {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .nonogram-brand span {
+      display: none;
+    }
+
+    .nonogram-brand h1 {
+      font-size: 25px;
+    }
+
+    .difficulty-switch button {
+      min-width: 32px;
+      padding-inline: 5px;
+    }
+
+    .tool-button span {
+      font-size: 10px;
+    }
+
+    .restart-button {
+      padding-inline: 7px;
+      white-space: nowrap;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .nonogram-brand {
+      display: none;
+    }
+
+    .nonogram-header {
+      justify-content: center;
+    }
+
+    .tool-button {
+      width: 42px;
+      justify-content: center;
+      padding-inline: 6px;
+    }
+
+    .tool-button span {
+      display: none;
+    }
+  }
+
+  @media (max-height: 720px) and (min-width: 721px) {
+    :scope.nonogram-stage {
+      padding-block: 8px;
+    }
+
+    .nonogram-shell {
+      min-height: calc(100dvh - 16px);
+      gap: 7px;
+    }
+
+    .nonogram-header {
+      min-height: 52px;
+    }
+
+    .nonogram-play {
+      padding-block: 7px 10px;
+    }
+
+    .tool-dock {
+      min-height: 58px;
+      padding-block: 5px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

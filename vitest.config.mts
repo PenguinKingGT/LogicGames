@@ -18,6 +18,10 @@ export default defineConfig({
         "src/games/mastermind/**/*.{ts,tsx}",
         "src/games/polymine/domain/**/*.ts",
         "src/games/polymine/persistence/*.ts",
+        "src/games/nonogram/domain/**/*.ts",
+        "src/games/nonogram/audio/*.ts",
+        "src/games/nonogram/app/game-reducer.ts",
+        "src/games/nonogram/persistence/*.ts",
       ],
       exclude: [
         "src/**/*.test.{ts,tsx}",

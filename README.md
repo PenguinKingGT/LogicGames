@@ -4,6 +4,7 @@
 
 - `/games/mastermind`：彩码谜局，根据颜色与位置反馈破解四位密码。
 - `/games/polymine`：PolyMine，在正方形、三角形和六边形棋盘上推理排雷。
+- `/games/nonogram`：数织，根据行列数字线索还原隐藏图案。
 
 首页 `/` 是游戏菜单，每个游戏使用独立路由、状态和样式作用域。
 
@@ -51,6 +52,7 @@ src/
   games/catalog.ts        首页使用的静态游戏目录
   games/mastermind/       彩码谜局完整实现
   games/polymine/         PolyMine 完整实现
+  games/nonogram/         数织完整实现
 ```
 
 两个迁移来源项目不是运行时依赖。新增游戏时，将实现放在

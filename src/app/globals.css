@@ -250,6 +250,44 @@ input {
   color: #d95d3f;
 }
 
+.game-card-nonogram {
+  color: #302d29;
+  background: #eee7da;
+}
+
+.game-card-nonogram .game-card-art {
+  color: #3d3a35;
+  background: rgba(255, 253, 247, 0.52);
+}
+
+.game-card-nonogram .game-card-main-icon {
+  opacity: 0.92;
+}
+
+.nonogram-pixel {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  background: #df684d;
+}
+
+.nonogram-pixel-one {
+  top: 14%;
+  right: 12%;
+}
+
+.nonogram-pixel-two {
+  right: 19%;
+  bottom: 13%;
+  background: #302d29;
+}
+
+.nonogram-pixel-three {
+  bottom: 22%;
+  left: 10%;
+  background: #df684d;
+}
+
 .game-route-shell {
   min-height: 100dvh;
   background: var(--site-background);
@@ -433,6 +471,20 @@ input {
   .game-card-polymine .game-card-art {
     color: #6cd69e;
     background: rgba(255, 255, 255, 0.06);
+  }
+
+  .game-card-nonogram {
+    color: #f4eee5;
+    background: #38342f;
+  }
+
+  .game-card-nonogram .game-card-art {
+    color: #e9ded0;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .nonogram-pixel-two {
+    background: #f4eee5;
   }
 }
 

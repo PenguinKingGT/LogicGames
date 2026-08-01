@@ -24,6 +24,7 @@ written, so there is no target commit SHA. The source snapshots are:
 /games/polymine           one full-screen Client Component game route
                                   |
                                   +-- Phaser loaded dynamically in browser only
+/games/nonogram           one DOM-based Client Component game route (planned)
 ```
 
 Application-owned code lives under `src/`; migrated game code is namespaced
@@ -40,6 +41,7 @@ boundaries.
 | 002 | Migrate MasterMind into its own route | P1 | M | 001 | DONE |
 | 003 | Migrate PolyMine with a client-only Phaser boundary | P1 | L | 001 | DONE |
 | 004 | Verify the combined site and close migration gaps | P1 | M | 002, 003 | DONE |
+| 005 | Add a complete Nonogram game as the third standalone route | P1 | L | 004 | DONE |
 
 Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 `REJECTED (<reason>)`.
@@ -53,6 +55,8 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
   audio, Tailwind, and CSS-isolation conventions without Phaser.
 - 004 must run after both migrations because it verifies cross-route style and
   lifecycle isolation and the complete production bundle.
+- 005 extends the verified route/catalog pattern after 004. Its pure clue
+  engine, uniqueness validator, and reducer must land before UI integration.
 
 ## Architectural decisions
 
@@ -71,6 +75,9 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - Keep Phaser out of the home and MasterMind module graphs. Load it only from a
   PolyMine Client Component using `next/dynamic` or a browser-only dynamic
   import.
+- Implement Nonogram as a DOM grid with a pure reducer. Keep its test-only
+  uniqueness solver out of the route import graph and do not add a renderer or
+  state-management dependency.
 - Isolate game CSS and CSS variables by a game root namespace. A game may not
   assign its palette globally on `:root`, `html`, or `body`.
 - Do not enable `output: "export"` until a deployment target requires it. The
@@ -95,3 +102,8 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - Add Playwright in the initial migration: deferred. Vitest preserves both
   engines and component flows; browser E2E should be added when CI and the
   deployment/browser matrix are defined.
+- Generate arbitrary Nonogram bitmaps at runtime: rejected for plan 005 because
+  derived clues can have multiple solutions. The first release uses curated
+  puzzles guarded by an exactly-one-solution test.
+- Render Nonogram with Canvas/Phaser: rejected because a DOM grid provides
+  better clue layout, focus semantics, keyboard access, and smaller route cost.

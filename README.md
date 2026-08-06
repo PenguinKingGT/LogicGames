@@ -6,6 +6,7 @@
 - `/games/polymine`：PolyMine，在正方形、三角形和六边形棋盘上推理排雷。
 - `/games/nonogram`：数织，根据行列数字线索还原隐藏图案。
 - `/games/circle-cat`：圈小猫，封住圆点路线，在小猫到达边缘前把它圈住。
+- `/games/2048`：数字方阵，滑动并合并数字方块，挑战 2048 和更高分数。
 
 首页 `/` 是游戏菜单，每个游戏使用独立路由、状态和样式作用域。
 
@@ -55,6 +56,7 @@ src/
   games/polymine/         PolyMine 完整实现
   games/nonogram/         数织完整实现
   games/circle-cat/       圈小猫完整实现
+  games/2048/             数字方阵完整实现
 ```
 
 两个迁移来源项目不是运行时依赖。新增游戏时，将实现放在

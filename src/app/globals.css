@@ -332,6 +332,14 @@ input {
   background: #df684d;
 }
 
+.game-card-2048 { color: #edf3f7; background: #243447; }
+.game-card-2048 .game-card-art { background: rgba(255, 255, 255, 0.055); }
+.number-card-grid { width: 76%; aspect-ratio: 1; position: absolute; right: 12%; bottom: 12%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 6px; border-radius: 13px; background: #17212b; }
+.number-card-grid span { display: grid; place-items: center; border-radius: 5px; background: rgba(220, 226, 227, .16); color: white; font: 800 clamp(9px, 1.2vw, 16px)/1 var(--font-geist-mono), monospace; }
+.number-card-grid span[data-value="2"], .number-card-grid span[data-value="4"] { background: #315c9b; }
+.number-card-grid span[data-value="8"], .number-card-grid span[data-value="16"] { background: #4b77b3; }
+.number-card-grid span[data-value="32"], .number-card-grid span[data-value="64"] { background: #d96b43; }
+
 .game-route-shell {
   min-height: 100dvh;
   background: var(--site-background);

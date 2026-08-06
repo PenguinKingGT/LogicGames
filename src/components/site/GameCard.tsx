@@ -69,5 +69,13 @@ function GameCardArt({ art }: { art: Game["art"] }) {
           <span className="circle-cat-route-node circle-cat-route-node-three" />
         </>
       );
+    case "number":
+      return (
+        <div className="number-card-grid">
+          {[2, 0, 8, 4, 0, 16, 0, 2, 4, 0, 32, 0, 0, 2, 0, 64].map((value, index) => (
+            <span key={index} data-value={value || undefined}>{value || ""}</span>
+          ))}
+        </div>
+      );
   }
 }

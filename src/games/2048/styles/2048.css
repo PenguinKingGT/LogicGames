@@ -1,0 +1,77 @@
+.game-2048,
+.game-2048-portal {
+  color-scheme: light;
+  --g-ink: #17212b;
+  --g-frame: #243447;
+  --g-paper: #f3f5f4;
+  --g-cell: #dce2e3;
+  --g-cobalt: #315c9b;
+  --g-persimmon: #d96b43;
+  --g-muted: #66717a;
+  --g-line: #c7cfd1;
+  --g-gap: clamp(7px, 1.8vw, 12px);
+  --g-board: min(86vw, 500px, calc(100dvh - 210px));
+  color: var(--g-ink);
+  font-family: var(--font-geist), "PingFang SC", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  .game-2048, .game-2048-portal {
+    color-scheme: dark; --g-ink: #edf1f2; --g-frame: #131c26; --g-paper: #202b35;
+    --g-cell: #34424e; --g-muted: #aeb8be; --g-line: #4a5965;
+  }
+}
+
+@scope (.game-2048, .game-2048-portal) {
+  * { box-sizing: border-box; }
+  button { color: inherit; font: inherit; }
+  button:focus-visible, [tabindex]:focus-visible { outline: 3px solid color-mix(in srgb, var(--g-cobalt) 55%, white); outline-offset: 3px; }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  :scope.game-2048 { min-width: 320px; min-height: 100dvh; padding: max(14px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); background: var(--g-paper); }
+  .g2048-shell { width: min(1040px, 100%); min-height: calc(100dvh - 30px); margin: auto; display: grid; grid-template-rows: auto 1fr; }
+  .g2048-header { min-height: 78px; display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 22px; border-bottom: 1px solid var(--g-line); }
+  .g2048-title span, .g2048-dialog-kicker { color: var(--g-persimmon); font: 750 10px/1 var(--font-geist-mono), monospace; letter-spacing: .14em; }
+  .g2048-title h1 { margin: 3px 0 0; font-size: clamp(27px, 3.2vw, 38px); line-height: 1; letter-spacing: -.06em; }
+  .g2048-score { display: flex; gap: 8px; }
+  .g2048-score > span { min-width: 82px; padding: 7px 10px; border-left: 1px solid var(--g-line); color: var(--g-muted); font-size: 10px; }
+  .g2048-score strong { display: block; color: var(--g-ink); font: 760 18px/1.2 var(--font-geist-mono), monospace; font-variant-numeric: tabular-nums; }
+  .g2048-tools { display: flex; gap: 6px; }
+  .g2048-tools button { width: 44px; height: 44px; border: 1px solid var(--g-line); border-radius: 12px; display: grid; place-items: center; background: transparent; cursor: pointer; }
+  .g2048-tools svg { width: 19px; height: 19px; }
+  .g2048-play { min-height: 0; display: grid; place-content: center; justify-items: center; gap: 14px; padding-block: 22px 8px; }
+  .g2048-board { width: var(--g-board); height: var(--g-board); position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--g-gap); padding: var(--g-gap); border: 1px solid color-mix(in srgb, white 10%, transparent); border-radius: 19px; background: var(--g-frame); box-shadow: 0 28px 70px -42px rgba(15, 29, 42, .7); touch-action: none; user-select: none; }
+  .g2048-cell { border-radius: 12px; background: color-mix(in srgb, var(--g-cell) 28%, transparent); }
+  .g2048-tile-layer { position: absolute; inset: var(--g-gap); pointer-events: none; }
+  .g2048-tile { --unit: calc((var(--g-board) - var(--g-gap) * 5) / 4); width: var(--unit); height: var(--unit); position: absolute; left: calc(var(--tile-col) * (var(--unit) + var(--g-gap))); top: calc(var(--tile-row) * (var(--unit) + var(--g-gap))); display: grid; place-items: center; border-radius: 12px; background: #d9e3f0; color: #1b365b; transition: left 165ms cubic-bezier(.2,.8,.2,1), top 165ms cubic-bezier(.2,.8,.2,1); }
+  .g2048-tile span { font: 820 clamp(24px, 7vw, 54px)/1 var(--font-geist-mono), monospace; letter-spacing: -.08em; font-variant-numeric: tabular-nums; }
+  .g2048-tile[data-value="4"] { background: #c1d2e6; }
+  .g2048-tile[data-value="8"], .g2048-tile[data-value="16"] { background: var(--g-cobalt); color: white; }
+  .g2048-tile[data-value="32"], .g2048-tile[data-value="64"] { background: #254876; color: white; }
+  .g2048-tile[data-value="128"], .g2048-tile[data-value="256"], .g2048-tile[data-value="512"] { background: #cf805f; color: #fff; }
+  .g2048-tile[data-value="1024"], .g2048-tile[data-value="2048"] { background: var(--g-persimmon); color: #fff; }
+  .g2048-tile[data-merged] span { animation: g2048-press 220ms ease-out; }
+  .g2048-tile[data-spawned] { animation: g2048-enter 180ms ease-out; }
+  #g2048-instructions { margin: 0; color: var(--g-muted); font-size: 12px; letter-spacing: .02em; }
+  .g2048-live { width: 1px; height: 1px; position: absolute; overflow: hidden; clip: rect(0 0 0 0); }
+  .g2048-dialog-overlay { position: fixed; z-index: 80; inset: 0; background: rgba(10, 18, 26, .62); backdrop-filter: blur(6px); }
+  .g2048-dialog { width: min(420px, calc(100vw - 28px)); position: fixed; z-index: 81; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 30px; border: 1px solid var(--g-line); border-radius: 18px; background: var(--g-paper); box-shadow: 0 30px 90px rgba(0,0,0,.3); }
+  .g2048-dialog h2 { margin: 8px 0 10px; font-size: 30px; letter-spacing: -.05em; }
+  .g2048-dialog p { margin: 0; color: var(--g-muted); line-height: 1.6; }
+  .g2048-dialog-close { width: 40px; height: 40px; position: absolute; top: 14px; right: 14px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; }
+  .g2048-dialog-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 24px; }
+  .g2048-dialog-actions button { min-height: 44px; padding: 0 18px; border: 1px solid var(--g-cobalt); border-radius: 10px; background: var(--g-cobalt); color: white; cursor: pointer; font-weight: 720; }
+  .g2048-dialog-actions .secondary { border-color: var(--g-line); background: transparent; color: var(--g-ink); }
+}
+
+@keyframes g2048-enter { from { opacity: 0; transform: scale(.65); } }
+@keyframes g2048-press { 45% { transform: scale(1.13); } }
+@media (max-width: 700px) {
+  .game-2048 { --g-board: min(calc(100vw - 24px), 470px); }
+  .game-2048 .g2048-header { grid-template-columns: 1fr auto; gap: 10px; padding-bottom: 10px; }
+  .game-2048 .g2048-score { order: 3; grid-column: 1 / -1; width: 100%; }
+  .game-2048 .g2048-score > span { flex: 1; }
+  .game-2048 .g2048-tools { gap: 4px; }
+  .game-2048 .g2048-tools button { width: 42px; height: 42px; }
+}
+@media (max-height: 620px) and (orientation: landscape) { .game-2048 { --g-board: min(67dvh, 420px); } .game-2048 .g2048-header { min-height: 62px; } .game-2048 .g2048-play { padding-block: 8px; } }
+@media (prefers-reduced-motion: reduce) { .game-2048 .g2048-tile { transition-duration: 1ms; animation: none !important; } }

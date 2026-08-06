@@ -27,6 +27,13 @@ export const games = [
     href: "/games/circle-cat",
     art: "cat",
   },
+  {
+    slug: "2048",
+    title: "数字方阵",
+    englishTitle: "2048",
+    href: "/games/2048",
+    art: "number",
+  },
 ] as const;
 
 export type Game = (typeof games)[number];

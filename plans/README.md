@@ -26,6 +26,10 @@ written, so there is no target commit SHA. The source snapshots are:
                                   +-- Phaser loaded dynamically in browser only
 /games/nonogram           one DOM-based Client Component game route
 /games/circle-cat         one DOM-based Client Component pursuit game
+/games/2048               one DOM-based Client Component number game
+/games/othello            one DOM-based Client Component strategy game
+                                  |
+                                  +-- AI search runs in a route-owned Web Worker
 ```
 
 Application-owned code lives under `src/`; migrated game code is namespaced
@@ -45,6 +49,7 @@ boundaries.
 | 005 | Add a complete Nonogram game as the third standalone route | P1 | L | 004 | DONE |
 | 006 | Add 圈小猫 as the fourth standalone game | P1 | L | 005 | DONE |
 | 007 | Add a complete 2048 game as the fifth standalone route | P1 | L | 006 | DONE |
+| 008 | Add a complete human-versus-AI Othello game | P1 | L | 007 | DONE |
 
 Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 `REJECTED (<reason>)`.
@@ -67,6 +72,9 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - 007 extends the collection with a deterministic 2048 engine, stable motion
   metadata, defensive session persistence, and keyboard/swipe input. It uses
   the route, reducer, storage, audio, and CSS-isolation conventions from 006.
+- 008 adds the first adversarial strategy game. Its pure rules engine must land
+  before AI search; the Web Worker protocol and stale-result-safe reducer must
+  land before UI integration.
 
 ## Architectural decisions
 
@@ -94,6 +102,9 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - Implement 2048 as a DOM tile grid backed by a deterministic pure engine.
   Keep animation metadata out of the DOM, persist only validated local state,
   and support keyboard, WASD, and board-scoped swipe input.
+- Implement Othello as a DOM grid backed by a pure rules engine and route-owned
+  Worker AI. Keep search off the main thread, validate every returned move,
+  and identify all requests by round and turn.
 - Isolate game CSS and CSS variables by a game root namespace. A game may not
   assign its palette globally on `:root`, `html`, or `body`.
 - Do not enable `output: "export"` until a deployment target requires it. The

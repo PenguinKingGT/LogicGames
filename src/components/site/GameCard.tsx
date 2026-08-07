@@ -8,6 +8,14 @@ import {
 import Link from "next/link";
 import type { Game } from "@/games/catalog";
 
+const OTHELLO_CARD_DISCS = new Map<number, "black" | "white" | "legal">([
+  [2, "legal"],
+  [5, "white"],
+  [6, "black"],
+  [9, "black"],
+  [10, "white"],
+]);
+
 export function GameCard({ game }: { game: Game }) {
   return (
     <Link
@@ -74,6 +82,14 @@ function GameCardArt({ art }: { art: Game["art"] }) {
         <div className="number-card-grid">
           {[2, 0, 8, 4, 0, 16, 0, 2, 4, 0, 32, 0, 0, 2, 0, 64].map((value, index) => (
             <span key={index} data-value={value || undefined}>{value || ""}</span>
+          ))}
+        </div>
+      );
+    case "disc":
+      return (
+        <div className="othello-card-board">
+          {Array.from({ length: 16 }, (_, index) => (
+            <span key={index} data-disc={OTHELLO_CARD_DISCS.get(index)} />
           ))}
         </div>
       );

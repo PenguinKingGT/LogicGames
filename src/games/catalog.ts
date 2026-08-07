@@ -34,6 +34,13 @@ export const games = [
     href: "/games/2048",
     art: "number",
   },
+  {
+    slug: "othello",
+    title: "黑白棋",
+    englishTitle: "Othello",
+    href: "/games/othello",
+    art: "disc",
+  },
 ] as const;
 
 export type Game = (typeof games)[number];

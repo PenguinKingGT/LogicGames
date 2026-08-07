@@ -339,6 +339,57 @@ input {
 .number-card-grid span[data-value="2"], .number-card-grid span[data-value="4"] { background: #315c9b; }
 .number-card-grid span[data-value="8"], .number-card-grid span[data-value="16"] { background: #4b77b3; }
 .number-card-grid span[data-value="32"], .number-card-grid span[data-value="64"] { background: #d96b43; }
+.game-card-othello {
+  color: #f2f0e8;
+  background: #131c22;
+}
+
+.game-card-othello .game-card-art {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.othello-card-board {
+  width: 76%;
+  aspect-ratio: 1;
+  position: absolute;
+  right: 12%;
+  bottom: 12%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+  border: 1px solid #7ea091;
+  border-radius: 12px;
+  background: #1f5b4b;
+}
+
+.othello-card-board span {
+  position: relative;
+  border-right: 1px solid rgba(126, 160, 145, 0.7);
+  border-bottom: 1px solid rgba(126, 160, 145, 0.7);
+}
+
+.othello-card-board span[data-disc]::after {
+  content: "";
+  width: 66%;
+  aspect-ratio: 1;
+  position: absolute;
+  inset: 17%;
+  border-radius: 50%;
+  background: #15191c;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+.othello-card-board span[data-disc="white"]::after {
+  background: #f2f0e8;
+}
+
+.othello-card-board span[data-disc="legal"]::after {
+  width: 32%;
+  inset: 34%;
+  border: 2px solid #e58b4a;
+  background: transparent;
+  box-shadow: none;
+}
 
 .game-route-shell {
   min-height: 100dvh;

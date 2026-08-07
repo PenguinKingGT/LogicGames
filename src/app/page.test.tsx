@@ -28,5 +28,9 @@ describe("home menu", () => {
       .toHaveAttribute("href", "/games/2048");
     expect(screen.getByRole("link", { name: "在新标签页打开数字方阵" }))
       .toHaveAttribute("target", "_blank");
+    expect(screen.getByRole("link", { name: "在新标签页打开黑白棋" }))
+      .toHaveAttribute("href", "/games/othello");
+    expect(screen.getByRole("link", { name: "在新标签页打开黑白棋" }))
+      .toHaveAttribute("target", "_blank");
   });
 });

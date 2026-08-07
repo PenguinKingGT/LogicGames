@@ -30,6 +30,9 @@ written, so there is no target commit SHA. The source snapshots are:
 /games/othello            one DOM-based Client Component strategy game
                                   |
                                   +-- AI search runs in a route-owned Web Worker
+/games/twenty-four        one DOM-based Client Component arithmetic game
+                                  |
+                                  +-- exact rational solver validates every puzzle
 ```
 
 Application-owned code lives under `src/`; migrated game code is namespaced
@@ -40,16 +43,17 @@ boundaries.
 
 ## Execution order and status
 
-| Plan | Title | Priority | Effort | Depends on | Status |
-|------|-------|----------|--------|------------|--------|
-| 001 | Establish the Next.js application and tested menu | P1 | M | none | DONE |
-| 002 | Migrate MasterMind into its own route | P1 | M | 001 | DONE |
-| 003 | Migrate PolyMine with a client-only Phaser boundary | P1 | L | 001 | DONE |
-| 004 | Verify the combined site and close migration gaps | P1 | M | 002, 003 | DONE |
-| 005 | Add a complete Nonogram game as the third standalone route | P1 | L | 004 | DONE |
-| 006 | Add 圈小猫 as the fourth standalone game | P1 | L | 005 | DONE |
-| 007 | Add a complete 2048 game as the fifth standalone route | P1 | L | 006 | DONE |
-| 008 | Add a complete human-versus-AI Othello game | P1 | L | 007 | DONE |
+| Plan | Title                                                      | Priority | Effort | Depends on | Status      |
+| ---- | ---------------------------------------------------------- | -------- | ------ | ---------- | ----------- |
+| 001  | Establish the Next.js application and tested menu          | P1       | M      | none       | DONE        |
+| 002  | Migrate MasterMind into its own route                      | P1       | M      | 001        | DONE        |
+| 003  | Migrate PolyMine with a client-only Phaser boundary        | P1       | L      | 001        | DONE        |
+| 004  | Verify the combined site and close migration gaps          | P1       | M      | 002, 003   | DONE        |
+| 005  | Add a complete Nonogram game as the third standalone route | P1       | L      | 004        | DONE        |
+| 006  | Add 圈小猫 as the fourth standalone game                   | P1       | L      | 005        | DONE        |
+| 007  | Add a complete 2048 game as the fifth standalone route     | P1       | L      | 006        | DONE        |
+| 008  | Add a complete human-versus-AI Othello game                | P1       | L      | 007        | DONE        |
+| 009  | Add a complete 24 Point arithmetic game                    | P2       | M      | 008        | DONE        |
 
 Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 `REJECTED (<reason>)`.
@@ -75,6 +79,10 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - 008 adds the first adversarial strategy game. Its pure rules engine must land
   before AI search; the Web Worker protocol and stale-result-safe reducer must
   land before UI integration.
+- 009 adds an exact-arithmetic card-combination game. Rational primitives and
+  the solver must land before the puzzle bank, reducer, and interface so every
+  shipped puzzle and accepted result can be verified without floating-point
+  ambiguity.
 
 ## Architectural decisions
 
@@ -105,6 +113,9 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - Implement Othello as a DOM grid backed by a pure rules engine and route-owned
   Worker AI. Keep search off the main thread, validate every returned move,
   and identify all requests by round and turn.
+- Implement 24 Point as DOM cards backed by normalized rational arithmetic and
+  a pure expression solver. Use a validated local puzzle bank and never judge
+  success with floating-point tolerance.
 - Isolate game CSS and CSS variables by a game root namespace. A game may not
   assign its palette globally on `:root`, `html`, or `body`.
 - Do not enable `output: "export"` until a deployment target requires it. The

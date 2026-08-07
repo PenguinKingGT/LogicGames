@@ -80,9 +80,13 @@ function GameCardArt({ art }: { art: Game["art"] }) {
     case "number":
       return (
         <div className="number-card-grid">
-          {[2, 0, 8, 4, 0, 16, 0, 2, 4, 0, 32, 0, 0, 2, 0, 64].map((value, index) => (
-            <span key={index} data-value={value || undefined}>{value || ""}</span>
-          ))}
+          {[2, 0, 8, 4, 0, 16, 0, 2, 4, 0, 32, 0, 0, 2, 0, 64].map(
+            (value, index) => (
+              <span key={index} data-value={value || undefined}>
+                {value || ""}
+              </span>
+            ),
+          )}
         </div>
       );
     case "disc":
@@ -91,6 +95,16 @@ function GameCardArt({ art }: { art: Game["art"] }) {
           {Array.from({ length: 16 }, (_, index) => (
             <span key={index} data-disc={OTHELLO_CARD_DISCS.get(index)} />
           ))}
+        </div>
+      );
+    case "arithmetic":
+      return (
+        <div className="twenty-four-card-equation">
+          <span>3</span>
+          <i>×</i>
+          <span>8</span>
+          <i>=</i>
+          <strong>24</strong>
         </div>
       );
   }

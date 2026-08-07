@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { games } from "./catalog";
 
 describe("game catalog", () => {
-  it("contains the six unique game routes", () => {
-    expect(games).toHaveLength(6);
-    expect(new Set(games.map((game) => game.slug)).size).toBe(6);
+  it("contains the seven unique game routes", () => {
+    expect(games).toHaveLength(7);
+    expect(new Set(games.map((game) => game.slug)).size).toBe(7);
     expect(games.map((game) => game.href)).toEqual([
       "/games/mastermind",
       "/games/polymine",
@@ -12,6 +12,7 @@ describe("game catalog", () => {
       "/games/circle-cat",
       "/games/2048",
       "/games/othello",
+      "/games/twenty-four",
     ]);
   });
 

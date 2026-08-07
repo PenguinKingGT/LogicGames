@@ -33,6 +33,9 @@ written, so there is no target commit SHA. The source snapshots are:
 /games/twenty-four        one DOM-based Client Component arithmetic game
                                   |
                                   +-- exact rational solver validates every puzzle
+/games/maze               one DOM-based Client Component navigation game
+                                  |
+                                  +-- pure generator guarantees a connected perfect maze
 ```
 
 Application-owned code lives under `src/`; migrated game code is namespaced
@@ -54,6 +57,7 @@ boundaries.
 | 007  | Add a complete 2048 game as the fifth standalone route     | P1       | L      | 006        | DONE        |
 | 008  | Add a complete human-versus-AI Othello game                | P1       | L      | 007        | DONE        |
 | 009  | Add a complete 24 Point arithmetic game                    | P2       | M      | 008        | DONE        |
+| 010  | Add a complete random maze navigation game                 | P2       | M      | 009        | DONE        |
 
 Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 `REJECTED (<reason>)`.
@@ -83,6 +87,9 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
   the solver must land before the puzzle bank, reducer, and interface so every
   shipped puzzle and accepted result can be verified without floating-point
   ambiguity.
+- 010 adds a random navigation game. The perfect-maze generator and movement
+  rules must land before reducer and input integration so keyboard and touch
+  input share one validated rule source.
 
 ## Architectural decisions
 
@@ -116,6 +123,10 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - Implement 24 Point as DOM cards backed by normalized rational arithmetic and
   a pure expression solver. Use a validated local puzzle bank and never judge
   success with floating-point tolerance.
+- Implement Maze as a DOM grid backed by a pure perfect-maze generator and
+  movement engine. Keep the full maze visible, offer standard and complex grid
+  sizes, and omit fog, move/time limits, daily seeds, hints, scoring, and
+  persistence.
 - Isolate game CSS and CSS variables by a game root namespace. A game may not
   assign its palette globally on `:root`, `html`, or `body`.
 - Do not enable `output: "export"` until a deployment target requires it. The

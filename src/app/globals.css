@@ -426,6 +426,65 @@ input {
   font-style: normal;
 }
 
+.game-card-maze {
+  color: #e8e7e1;
+  background: #202326;
+}
+
+.game-card-maze .game-card-art {
+  background: rgb(255 255 255 / 4%);
+}
+
+.maze-card-map {
+  width: 72%;
+  aspect-ratio: 1;
+  position: absolute;
+  right: 14%;
+  bottom: 12%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  border-right: 2px solid #202326;
+  border-bottom: 2px solid #202326;
+  background: #d8d9d4;
+  box-shadow: 8px 8px 0 rgb(0 0 0 / 18%);
+}
+
+.maze-card-map span {
+  border-top: 2px solid #202326;
+  border-left: 2px solid #202326;
+}
+
+.maze-card-map span[data-route] {
+  background: rgb(201 79 56 / 32%);
+}
+
+.maze-card-map i {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  color: #c94f38;
+  font:
+    800 12px/1 var(--font-geist-mono),
+    monospace;
+  font-style: normal;
+}
+
+.maze-card-start {
+  width: 20%;
+  height: 20%;
+  top: 0;
+  left: 0;
+}
+
+.maze-card-exit {
+  width: 20%;
+  height: 20%;
+  right: 0;
+  bottom: 0;
+  border: 1px solid #c94f38;
+}
+
 .othello-card-board {
   width: 76%;
   aspect-ratio: 1;

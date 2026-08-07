@@ -107,5 +107,20 @@ function GameCardArt({ art }: { art: Game["art"] }) {
           <strong>24</strong>
         </div>
       );
+    case "maze":
+      return (
+        <div className="maze-card-map">
+          {Array.from({ length: 25 }, (_, index) => (
+            <span
+              key={index}
+              data-route={
+                [0, 5, 6, 7, 12, 17, 18, 19, 24].includes(index) || undefined
+              }
+            />
+          ))}
+          <i className="maze-card-start">S</i>
+          <i className="maze-card-exit">E</i>
+        </div>
+      );
   }
 }

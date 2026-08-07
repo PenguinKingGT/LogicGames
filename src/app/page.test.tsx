@@ -52,5 +52,11 @@ describe("home menu", () => {
     expect(
       screen.getByRole("link", { name: "在新标签页打开24 点" }),
     ).toHaveAttribute("target", "_blank");
+    expect(
+      screen.getByRole("link", { name: "在新标签页打开迷宫" }),
+    ).toHaveAttribute("href", "/games/maze");
+    expect(
+      screen.getByRole("link", { name: "在新标签页打开迷宫" }),
+    ).toHaveAttribute("target", "_blank");
   });
 });

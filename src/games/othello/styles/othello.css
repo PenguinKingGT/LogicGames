@@ -65,12 +65,19 @@
     line-height: 1;
     letter-spacing: -0.06em;
   }
+  .othello-settings {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .othello-color-choice,
   .othello-difficulty {
     display: flex;
     padding: 4px;
     border: 1px solid var(--o-line);
     border-radius: 12px;
   }
+  .othello-color-choice button,
   .othello-difficulty button {
     min-height: 35px;
     padding: 0 13px;
@@ -82,6 +89,7 @@
     font-size: 12px;
     font-weight: 700;
   }
+  .othello-color-choice button[aria-pressed="true"],
   .othello-difficulty button[aria-pressed="true"] {
     background: var(--o-ivory);
     color: var(--o-night);
@@ -384,11 +392,14 @@
     grid-template-columns: 1fr auto;
     padding-bottom: 12px;
   }
-  .othello-game .othello-difficulty {
+  .othello-game .othello-settings {
     order: 3;
     grid-column: 1/-1;
-    justify-self: stretch;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    width: 100%;
   }
+  .othello-game .othello-color-choice button,
   .othello-game .othello-difficulty button {
     flex: 1;
   }
@@ -428,6 +439,11 @@
   .othello-game .othello-record {
     margin-top: 0;
     padding-top: 10px;
+  }
+}
+@media (max-width: 520px) {
+  .othello-game .othello-settings {
+    grid-template-columns: 1fr;
   }
 }
 @media (prefers-reduced-motion: reduce) {

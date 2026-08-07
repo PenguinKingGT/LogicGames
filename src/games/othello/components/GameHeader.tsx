@@ -6,6 +6,7 @@ import {
   SpeakerSlash,
 } from "@phosphor-icons/react";
 import type { Difficulty } from "../ai/search";
+import type { Player } from "../domain/types";
 
 const DIFFICULTIES: readonly Difficulty[] = ["easy", "normal", "hard"];
 const DIFFICULTY_LABELS: Readonly<Record<Difficulty, string>> = {
@@ -16,9 +17,11 @@ const DIFFICULTY_LABELS: Readonly<Record<Difficulty, string>> = {
 
 interface GameHeaderProps {
   readonly difficulty: Difficulty;
+  readonly humanPlayer: Player;
   readonly canUndo: boolean;
   readonly soundEnabled: boolean;
   readonly onDifficultyChange: (difficulty: Difficulty) => void;
+  readonly onHumanPlayerChange: (player: Player) => void;
   readonly onUndo: () => void;
   readonly onRestart: () => void;
   readonly onSoundToggle: () => void;
@@ -27,9 +30,11 @@ interface GameHeaderProps {
 
 export function GameHeader({
   difficulty,
+  humanPlayer,
   canUndo,
   soundEnabled,
   onDifficultyChange,
+  onHumanPlayerChange,
   onUndo,
   onRestart,
   onSoundToggle,
@@ -42,17 +47,36 @@ export function GameHeader({
         <h1>黑白棋</h1>
       </div>
 
-      <div className="othello-difficulty">
-        {DIFFICULTIES.map((option) => (
+      <div className="othello-settings">
+        <div className="othello-color-choice" aria-label="选择执棋颜色">
           <button
             type="button"
-            key={option}
-            aria-pressed={difficulty === option}
-            onClick={() => onDifficultyChange(option)}
+            aria-pressed={humanPlayer === "black"}
+            onClick={() => onHumanPlayerChange("black")}
           >
-            {DIFFICULTY_LABELS[option]}
+            执黑先手
           </button>
-        ))}
+          <button
+            type="button"
+            aria-pressed={humanPlayer === "white"}
+            onClick={() => onHumanPlayerChange("white")}
+          >
+            执白后手
+          </button>
+        </div>
+
+        <div className="othello-difficulty">
+          {DIFFICULTIES.map((option) => (
+            <button
+              type="button"
+              key={option}
+              aria-pressed={difficulty === option}
+              onClick={() => onDifficultyChange(option)}
+            >
+              {DIFFICULTY_LABELS[option]}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="othello-tools">

@@ -1,11 +1,12 @@
 import { useState, type KeyboardEvent } from "react";
 import { getLegalMoves, toCoordinate } from "../domain/board";
-import type { Board, Cell } from "../domain/types";
+import type { Board, Cell, Player } from "../domain/types";
 
 const COLUMN_LABELS = "ABCDEFGH".split("");
 
 interface OthelloBoardProps {
   readonly board: Board;
+  readonly humanPlayer: Player;
   readonly interactive: boolean;
   readonly lastIndex?: number;
   readonly flipped: readonly number[];
@@ -29,13 +30,14 @@ function getCellLabel(
 
 export function OthelloBoard({
   board,
+  humanPlayer,
   interactive,
   lastIndex,
   flipped,
   onMove,
 }: OthelloBoardProps) {
   const legalMoves = new Map(
-    getLegalMoves(board, "black").map((move) => [
+    getLegalMoves(board, humanPlayer).map((move) => [
       move.index,
       move.flips.length,
     ]),

@@ -44,4 +44,27 @@ describe("Othello App", () => {
       "true",
     );
   });
+
+  it("lets the human play white after the computer opens as black", async () => {
+    const user = userEvent.setup();
+    render(
+      <App animationMs={1} thinkingMs={1} aiTimeoutMs={20} random={() => 0} />,
+    );
+    await ready();
+
+    await user.click(screen.getByRole("button", { name: "执白后手" }));
+
+    expect(screen.getByRole("button", { name: "执白后手" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    expect(screen.getByText("你 · 白")).toBeInTheDocument();
+    expect(screen.getByText("电脑 · 黑")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("轮到你落子")).toBeInTheDocument();
+    });
+    expect(
+      screen.getAllByRole("gridcell", { name: /可落子/ }).length,
+    ).toBeGreaterThan(0);
+  });
 });

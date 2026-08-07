@@ -3,6 +3,7 @@ import {
   countDiscs,
   createInitialBoard,
   getLegalMoves,
+  opponent,
   resolveTurn,
 } from "../domain/board";
 import type {
@@ -31,6 +32,7 @@ export interface GameState {
   readonly counts: DiscCounts;
   readonly result: GameResult | null;
   readonly difficulty: Difficulty;
+  readonly humanPlayer: Player;
   readonly lastMove: Move | null;
   readonly passed: Player | null;
   readonly roundId: number;
@@ -60,6 +62,7 @@ export type GameAction =
   | {
       readonly type: "new-game";
       readonly difficulty?: Difficulty;
+      readonly humanPlayer?: Player;
       readonly roundId: number;
     }
   | { readonly type: "undo" };
@@ -67,15 +70,17 @@ export type GameAction =
 export function createGameState(
   difficulty: Difficulty = "normal",
   roundId = 1,
+  humanPlayer: Player = "black",
 ): GameState {
   const board = createInitialBoard();
   return {
     board,
-    phase: "human-turn",
+    phase: humanPlayer === "black" ? "human-turn" : "ai-thinking",
     currentPlayer: "black",
     counts: countDiscs(board),
     result: null,
     difficulty,
+    humanPlayer,
     lastMove: null,
     passed: null,
     roundId,
@@ -100,7 +105,10 @@ function completeTurn(state: GameState, preferred: Player): GameState {
 
   return {
     ...state,
-    phase: resolution.nextPlayer === "black" ? "human-turn" : "ai-thinking",
+    phase:
+      resolution.nextPlayer === state.humanPlayer
+        ? "human-turn"
+        : "ai-thinking",
     currentPlayer: resolution.nextPlayer,
     passed: resolution.passed,
     lastMove: null,
@@ -113,6 +121,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     return createGameState(
       action.difficulty ?? state.difficulty,
       action.roundId,
+      action.humanPlayer ?? state.humanPlayer,
     );
   }
 
@@ -131,7 +140,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       board: state.undo.board,
       counts: countDiscs(state.undo.board),
       phase: "human-turn",
-      currentPlayer: "black",
+      currentPlayer: state.humanPlayer,
       result: null,
       lastMove: null,
       passed: null,
@@ -142,14 +151,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   }
   if (action.type === "human-move") {
     if (state.phase !== "human-turn") return state;
-    const applied = applyMove(state.board, "black", action.index);
+    const applied = applyMove(state.board, state.humanPlayer, action.index);
     if (!applied) return state;
     return {
       ...state,
       board: applied.board,
       counts: countDiscs(applied.board),
       phase: "animating-human",
-      currentPlayer: "black",
+      currentPlayer: state.humanPlayer,
       lastMove: applied.move,
       passed: null,
       turnId: state.turnId + 1,
@@ -169,7 +178,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return state;
     }
 
-    return completeTurn(state, "white");
+    return completeTurn(state, opponent(state.humanPlayer));
   }
   if (action.type === "ai-move") {
     if (
@@ -180,13 +189,16 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return state;
     }
 
-    const legalMoves = getLegalMoves(state.board, "white");
+    const aiPlayer = opponent(state.humanPlayer);
+    const legalMoves = getLegalMoves(state.board, aiPlayer);
     const selectedIndex = legalMoves.some((move) => move.index === action.index)
       ? action.index
       : legalMoves[0]?.index;
-    if (selectedIndex === undefined) return completeTurn(state, "black");
+    if (selectedIndex === undefined) {
+      return completeTurn(state, state.humanPlayer);
+    }
 
-    const appliedMove = applyMove(state.board, "white", selectedIndex);
+    const appliedMove = applyMove(state.board, aiPlayer, selectedIndex);
     if (!appliedMove) return state;
 
     return {
@@ -194,7 +206,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       board: appliedMove.board,
       counts: countDiscs(appliedMove.board),
       phase: "animating-ai",
-      currentPlayer: "white",
+      currentPlayer: aiPlayer,
       lastMove: appliedMove.move,
       passed: null,
       turnId: state.turnId + 1,
@@ -209,5 +221,5 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     return state;
   }
 
-  return completeTurn(state, "black");
+  return completeTurn(state, state.humanPlayer);
 }

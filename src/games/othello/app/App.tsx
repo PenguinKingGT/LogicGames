@@ -12,7 +12,7 @@ import {
 import { GameHeader } from "../components/GameHeader";
 import { MatchLedger } from "../components/MatchLedger";
 import { OthelloBoard } from "../components/OthelloBoard";
-import { getLegalMoves } from "../domain/board";
+import { getLegalMoves, opponent } from "../domain/board";
 import type { GameResult, Player } from "../domain/types";
 import {
   defaultData,
@@ -23,7 +23,6 @@ import {
 } from "../persistence/storage";
 import { createGameState, gameReducer, type GameState } from "./game-reducer";
 
-const AI_PLAYER: Player = "white";
 const HARD_AI_BUDGET_MS = 650;
 const STANDARD_AI_BUDGET_MS = 10_000;
 
@@ -37,7 +36,13 @@ interface AppProps {
 
 type PendingAction =
   | { readonly type: "restart" }
-  | { readonly type: "difficulty"; readonly difficulty: Difficulty };
+  | { readonly type: "difficulty"; readonly difficulty: Difficulty }
+  | { readonly type: "human-player"; readonly humanPlayer: Player };
+
+interface NewGameSettings {
+  readonly difficulty?: Difficulty;
+  readonly humanPlayer?: Player;
+}
 
 function getStatus(state: GameState): string {
   if (state.phase === "ai-thinking") return "电脑正在思考…";
@@ -46,21 +51,28 @@ function getStatus(state: GameState): string {
     const passedPlayer = state.passed === "white" ? "白方" : "黑方";
     return `${passedPlayer}无棋可下，自动跳过`;
   }
-  return state.currentPlayer === "black" ? "轮到你落子" : "电脑落子中";
+  return state.currentPlayer === state.humanPlayer
+    ? "轮到你落子"
+    : "电脑落子中";
 }
 
 function getAiBudget(difficulty: Difficulty): number {
   return difficulty === "hard" ? HARD_AI_BUDGET_MS : STANDARD_AI_BUDGET_MS;
 }
 
-function getResultSound(result: GameResult): "win" | "lose" | "draw" {
-  if (result === "black") return "win";
-  if (result === "white") return "lose";
-  return "draw";
+function getResultSound(
+  result: GameResult,
+  humanPlayer: Player,
+): "win" | "lose" | "draw" {
+  if (result === "draw") return "draw";
+  if (result === humanPlayer) return "win";
+  return "lose";
 }
 
 function getPendingActionTitle(pendingAction: PendingAction | null): string {
-  return pendingAction?.type === "difficulty" ? "切换难度？" : "重新开局？";
+  if (pendingAction?.type === "difficulty") return "切换难度？";
+  if (pendingAction?.type === "human-player") return "切换执棋颜色？";
+  return "重新开局？";
 }
 
 export default function App({
@@ -98,6 +110,7 @@ export default function App({
       dispatch({
         type: "new-game",
         difficulty: storedPreferences.difficulty,
+        humanPlayer: storedPreferences.humanPlayer,
         roundId: 1,
       });
       setReady(true);
@@ -143,9 +156,10 @@ export default function App({
 
     const board = state.board;
     const difficulty = state.difficulty;
+    const aiPlayer = opponent(state.humanPlayer);
     const roundId = state.roundId;
     const turnId = state.turnId;
-    const firstLegalMove = getLegalMoves(board, AI_PLAYER)[0]?.index ?? null;
+    const firstLegalMove = getLegalMoves(board, aiPlayer)[0]?.index ?? null;
     let selectedMove: number | null = null;
     let minimumDelayElapsed = false;
     let delivered = false;
@@ -187,7 +201,7 @@ export default function App({
       const request: AiRequest = {
         type: "choose-move",
         board,
-        player: AI_PLAYER,
+        player: aiPlayer,
         difficulty,
         roundId,
         turnId,
@@ -197,7 +211,7 @@ export default function App({
     } else {
       quickSearchTimer = window.setTimeout(() => {
         selectedMove =
-          aiChooserRef.current(board, AI_PLAYER, difficulty, {
+          aiChooserRef.current(board, aiPlayer, difficulty, {
             random: randomRef.current(),
             timeBudgetMs: getAiBudget(difficulty),
           })?.index ?? null;
@@ -215,6 +229,7 @@ export default function App({
     aiTimeoutMs,
     state.board,
     state.difficulty,
+    state.humanPlayer,
     state.phase,
     state.roundId,
     state.turnId,
@@ -232,13 +247,14 @@ export default function App({
 
     const result = state.result;
     recordedRoundRef.current = state.roundId;
-    void audioManager.play(getResultSound(result));
+    void audioManager.play(getResultSound(result, state.humanPlayer));
 
     setPreferences((currentPreferences) => {
       const updatedPreferences = recordResult(
         currentPreferences,
         state.difficulty,
         result,
+        state.humanPlayer,
         state.counts.black,
         state.counts.white,
       );
@@ -249,31 +265,41 @@ export default function App({
     state.counts.black,
     state.counts.white,
     state.difficulty,
+    state.humanPlayer,
     state.phase,
     state.result,
     state.roundId,
   ]);
 
   const startGame = useCallback(
-    (difficulty: Difficulty = state.difficulty) => {
+    (settings: NewGameSettings = {}) => {
+      const difficulty = settings.difficulty ?? state.difficulty;
+      const humanPlayer = settings.humanPlayer ?? state.humanPlayer;
       recordedRoundRef.current = null;
       dispatch({
         type: "new-game",
         difficulty,
+        humanPlayer,
         roundId: state.roundId + 1,
       });
       setPendingAction(null);
       setPreferences((currentPreferences) => {
-        const updatedPreferences = { ...currentPreferences, difficulty };
+        const updatedPreferences = {
+          ...currentPreferences,
+          difficulty,
+          humanPlayer,
+        };
         writeData(updatedPreferences);
         return updatedPreferences;
       });
       void audioManager.play("button");
     },
-    [state.difficulty, state.roundId],
+    [state.difficulty, state.humanPlayer, state.roundId],
   );
 
-  const hasActiveGame = state.turnId > 0 && state.phase !== "finished";
+  const hasActiveGame =
+    state.phase !== "finished" &&
+    (state.turnId > 0 || state.phase === "ai-thinking");
   const status = getStatus(state);
 
   const requestDifficulty = (difficulty: Difficulty) => {
@@ -282,7 +308,16 @@ export default function App({
       setPendingAction({ type: "difficulty", difficulty });
       return;
     }
-    startGame(difficulty);
+    startGame({ difficulty });
+  };
+
+  const requestHumanPlayer = (humanPlayer: Player) => {
+    if (humanPlayer === state.humanPlayer) return;
+    if (hasActiveGame) {
+      setPendingAction({ type: "human-player", humanPlayer });
+      return;
+    }
+    startGame({ humanPlayer });
   };
 
   const toggleSound = () => {
@@ -299,11 +334,15 @@ export default function App({
   };
 
   const confirmPendingAction = () => {
-    const nextDifficulty =
-      pendingAction?.type === "difficulty"
-        ? pendingAction.difficulty
-        : state.difficulty;
-    startGame(nextDifficulty);
+    if (pendingAction?.type === "difficulty") {
+      startGame({ difficulty: pendingAction.difficulty });
+      return;
+    }
+    if (pendingAction?.type === "human-player") {
+      startGame({ humanPlayer: pendingAction.humanPlayer });
+      return;
+    }
+    startGame();
   };
 
   return (
@@ -311,12 +350,14 @@ export default function App({
       <div className="othello-shell">
         <GameHeader
           difficulty={state.difficulty}
+          humanPlayer={state.humanPlayer}
           canUndo={
             state.undo !== null &&
             (state.phase === "human-turn" || state.phase === "finished")
           }
           soundEnabled={preferences.soundEnabled}
           onDifficultyChange={requestDifficulty}
+          onHumanPlayerChange={requestHumanPlayer}
           onUndo={() => dispatch({ type: "undo" })}
           onRestart={() => {
             if (hasActiveGame) setPendingAction({ type: "restart" });
@@ -329,6 +370,7 @@ export default function App({
         <div className="othello-stage">
           <OthelloBoard
             board={state.board}
+            humanPlayer={state.humanPlayer}
             interactive={ready && state.phase === "human-turn"}
             lastIndex={state.lastMove?.index}
             flipped={state.lastMove?.flips ?? []}
@@ -341,6 +383,7 @@ export default function App({
             status={status}
             currentPlayer={state.currentPlayer}
             counts={state.counts}
+            humanPlayer={state.humanPlayer}
             difficulty={state.difficulty}
             stats={preferences.stats[state.difficulty]}
             fallbackUsed={state.fallbackUsed}
@@ -361,6 +404,7 @@ export default function App({
       />
       <ResultDialog
         result={state.result}
+        humanPlayer={state.humanPlayer}
         blackCount={state.counts.black}
         whiteCount={state.counts.white}
         onRestart={() => startGame()}

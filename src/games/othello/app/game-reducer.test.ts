@@ -49,4 +49,27 @@ describe("Othello reducer", () => {
       }),
     ).toBe(thinking);
   });
+
+  it("lets the AI play black before a human who chooses white", () => {
+    const state = createGameState("normal", 3, "white");
+    expect(state.phase).toBe("ai-thinking");
+    expect(state.currentPlayer).toBe("black");
+
+    const aiMove = gameReducer(state, {
+      type: "ai-move",
+      index: 19,
+      roundId: 3,
+      turnId: 0,
+    });
+    expect(aiMove.phase).toBe("animating-ai");
+    expect(aiMove.currentPlayer).toBe("black");
+
+    const humanTurn = gameReducer(aiMove, {
+      type: "finish-ai-animation",
+      roundId: 3,
+      turnId: 1,
+    });
+    expect(humanTurn.phase).toBe("human-turn");
+    expect(humanTurn.currentPlayer).toBe("white");
+  });
 });

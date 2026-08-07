@@ -1,4 +1,4 @@
-import type { GameResult } from "../domain/types";
+import type { GameResult, Player } from "../domain/types";
 import {
   Dialog,
   DialogClose,
@@ -19,8 +19,8 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
         <span className="othello-kicker">规则</span>
         <DialogTitle>夹住对手的棋</DialogTitle>
         <DialogDescription>
-          你执黑先行。落子必须从至少一个方向夹住白棋，所有被夹住的棋都会翻为黑色。
-          无棋可下时自动跳过，双方都不能落子时棋多者获胜。
+          选择执黑时你先行，选择执白时电脑先行。落子必须从至少一个方向夹住对手棋子，
+          所有被夹住的棋都会翻为己方颜色。无棋可下时自动跳过，双方都不能落子时棋多者获胜。
         </DialogDescription>
         <div className="othello-dialog-actions">
           <DialogClose>知道了</DialogClose>
@@ -68,14 +68,9 @@ export function AbandonDialog({
   );
 }
 
-const RESULT_LABELS: Readonly<Record<GameResult, string>> = {
-  black: "黑方获胜",
-  white: "白方获胜",
-  draw: "平局",
-};
-
 interface ResultDialogProps {
   readonly result: GameResult | null;
+  readonly humanPlayer: Player;
   readonly blackCount: number;
   readonly whiteCount: number;
   readonly onRestart: () => void;
@@ -83,11 +78,15 @@ interface ResultDialogProps {
 
 export function ResultDialog({
   result,
+  humanPlayer,
   blackCount,
   whiteCount,
   onRestart,
 }: ResultDialogProps) {
-  const title = result ? RESULT_LABELS[result] : "对局结束";
+  let title = "对局结束";
+  if (result === "draw") title = "平局";
+  else if (result === humanPlayer) title = "你获胜";
+  else if (result) title = "电脑获胜";
 
   return (
     <Dialog open={result !== null}>

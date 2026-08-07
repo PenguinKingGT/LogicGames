@@ -1,5 +1,5 @@
 import type { Difficulty } from "../ai/search";
-import type { GameResult } from "../domain/types";
+import type { GameResult, Player } from "../domain/types";
 
 export const OTHELLO_STORAGE_KEY = "othello:v1";
 export interface Stats {
@@ -11,6 +11,7 @@ export interface Stats {
 }
 export interface OthelloData {
   readonly difficulty: Difficulty;
+  readonly humanPlayer: Player;
   readonly soundEnabled: boolean;
   readonly stats: Readonly<Record<Difficulty, Stats>>;
 }
@@ -21,6 +22,7 @@ const emptyStats = (): Record<Difficulty, Stats> => ({
 });
 export const defaultData: OthelloData = {
   difficulty: "normal",
+  humanPlayer: "black",
   soundEnabled: true,
   stats: emptyStats(),
 };
@@ -28,6 +30,8 @@ const validDifficulty = (value: unknown): value is Difficulty =>
   value === "easy" || value === "normal" || value === "hard";
 const validCount = (value: unknown): value is number =>
   typeof value === "number" && Number.isInteger(value) && value >= 0;
+const validPlayer = (value: unknown): value is Player =>
+  value === "black" || value === "white";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -93,6 +97,9 @@ export function readData(storage?: Pick<Storage, "getItem">): OthelloData {
 
     return {
       difficulty: storedData.difficulty,
+      humanPlayer: validPlayer(storedData.humanPlayer)
+        ? storedData.humanPlayer
+        : "black",
       soundEnabled:
         typeof storedData.soundEnabled === "boolean"
           ? storedData.soundEnabled
@@ -122,11 +129,13 @@ export function recordResult(
   currentData: OthelloData,
   difficulty: Difficulty,
   result: GameResult,
+  humanPlayer: Player,
   blackCount: number,
   whiteCount: number,
 ): OthelloData {
   const currentStats = currentData.stats[difficulty];
-  const playerWon = result === "black";
+  const playerWon = result === humanPlayer;
+  const playerLost = result !== "draw" && !playerWon;
   const margin = Math.abs(blackCount - whiteCount);
   return {
     ...currentData,
@@ -135,7 +144,7 @@ export function recordResult(
       [difficulty]: {
         games: currentStats.games + 1,
         wins: currentStats.wins + Number(playerWon),
-        losses: currentStats.losses + Number(result === "white"),
+        losses: currentStats.losses + Number(playerLost),
         draws: currentStats.draws + Number(result === "draw"),
         bestMargin: playerWon
           ? Math.max(currentStats.bestMargin ?? 0, margin)

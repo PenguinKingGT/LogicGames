@@ -12,6 +12,7 @@ interface MatchLedgerProps {
   readonly status: string;
   readonly currentPlayer: Player | null;
   readonly counts: DiscCounts;
+  readonly humanPlayer: Player;
   readonly difficulty: Difficulty;
   readonly stats: Stats;
   readonly fallbackUsed: boolean;
@@ -21,10 +22,15 @@ export function MatchLedger({
   status,
   currentPlayer,
   counts,
+  humanPlayer,
   difficulty,
   stats,
   fallbackUsed,
 }: MatchLedgerProps) {
+  const aiPlayer = humanPlayer === "black" ? "white" : "black";
+  const humanCount = counts[humanPlayer];
+  const aiCount = counts[aiPlayer];
+
   return (
     <aside className="othello-ledger">
       <span className="othello-kicker">MATCH STATUS</span>
@@ -35,11 +41,14 @@ export function MatchLedger({
 
       <div className="othello-counts">
         <span>
-          <i className="black" />你 · 黑<strong>{counts.black}</strong>
+          <i className={humanPlayer} />你 ·{" "}
+          {humanPlayer === "black" ? "黑" : "白"}
+          <strong>{humanCount}</strong>
         </span>
         <span>
-          <i className="white" />
-          电脑 · 白<strong>{counts.white}</strong>
+          <i className={aiPlayer} />
+          电脑 · {aiPlayer === "black" ? "黑" : "白"}
+          <strong>{aiCount}</strong>
         </span>
       </div>
 

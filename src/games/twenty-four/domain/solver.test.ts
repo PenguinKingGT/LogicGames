@@ -14,6 +14,7 @@ describe("24 Point solver", () => {
   });
 
   it("verifies every bundled puzzle", () => {
+    expect(PUZZLES).toHaveLength(1362);
     const keys = new Set<string>();
     for (const puzzle of PUZZLES) {
       expect(puzzle.numbers).toHaveLength(4);

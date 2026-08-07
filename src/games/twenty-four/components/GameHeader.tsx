@@ -6,34 +6,22 @@ import {
   SpeakerHigh,
   SpeakerSlash,
 } from "@phosphor-icons/react";
-import type { Difficulty } from "../domain/types";
-
-const DIFFICULTIES: readonly Difficulty[] = ["easy", "normal", "hard"];
-const LABELS: Readonly<Record<Difficulty, string>> = {
-  easy: "简单",
-  normal: "标准",
-  hard: "困难",
-};
 
 interface GameHeaderProps {
-  readonly difficulty: Difficulty;
   readonly canUndo: boolean;
   readonly soundEnabled: boolean;
-  readonly onDifficultyChange: (difficulty: Difficulty) => void;
   readonly onUndo: () => void;
-  readonly onReset: () => void;
+  readonly onNewPuzzle: () => void;
   readonly onHint: () => void;
   readonly onHelp: () => void;
   readonly onSoundToggle: () => void;
 }
 
 export function GameHeader({
-  difficulty,
   canUndo,
   soundEnabled,
-  onDifficultyChange,
   onUndo,
-  onReset,
+  onNewPuzzle,
   onHint,
   onHelp,
   onSoundToggle,
@@ -44,18 +32,6 @@ export function GameHeader({
         <span>ARITHMETIC STUDY · No. 24</span>
         <h1>24 点</h1>
       </div>
-      <div className="twenty-four-difficulty" aria-label="选择难度">
-        {DIFFICULTIES.map((option) => (
-          <button
-            key={option}
-            type="button"
-            aria-pressed={difficulty === option}
-            onClick={() => onDifficultyChange(option)}
-          >
-            {LABELS[option]}
-          </button>
-        ))}
-      </div>
       <div className="twenty-four-tools">
         <button
           type="button"
@@ -65,7 +41,7 @@ export function GameHeader({
         >
           <ArrowUUpLeft />
         </button>
-        <button type="button" aria-label="重置本题" onClick={onReset}>
+        <button type="button" aria-label="换一题" onClick={onNewPuzzle}>
           <ArrowCounterClockwise />
         </button>
         <button type="button" aria-label="提示" onClick={onHint}>

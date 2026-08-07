@@ -43,8 +43,8 @@ caused by floating-point arithmetic.
   selection accepts injected randomness so tests are deterministic.
 - A round ends only when one card remains and its value is exactly 24. A
   one-card non-24 expression remains editable through undo or reset.
-- Viewing a complete solution marks the round assisted. A hint also marks the
-  round assisted. Assisted completions do not increase the standard streak.
+- Viewing a hint only reveals one solution and does not create a score,
+  completion category, streak, or other record.
 - The first release is single-player and local-only. Free-form text parsing,
   online leaderboards, accounts, daily server challenges, and user-authored
   puzzles are out of scope.
@@ -60,7 +60,7 @@ Use staged card combination rather than a free-form expression input:
    expression.
 
 The order of operands matters for subtraction and division. Keep the first
-selection visually and textually identifiable. Provide `撤销`, `重置本题`,
+selection visually and textually identifiable. Provide `撤销`, `换一题`,
 `提示`, `查看答案`, `下一题`, `玩法`, and a sound toggle. Disable actions that
 are not valid for the current phase rather than accepting silent no-ops.
 
@@ -69,21 +69,17 @@ with Enter or Space. Status changes and invalid division should be announced
 through one polite live region. Controls should meet a 44 px touch target, fit
 at 320 px without horizontal scrolling, and respect `prefers-reduced-motion`.
 
-## Difficulty and puzzle strategy
+## Puzzle strategy
 
-Ship a curated, solver-verified local puzzle bank. Store sorted number tuples
-once even when numbers repeat; do not generate expensive searches during
-rendering.
-
-- `简单`: small operands and at least one shallow integer-only solution.
-- `标准`: full `1–13` range with moderate expression depth.
-- `困难`: few canonical solutions, deeper grouping, or a solution requiring a
-  fractional intermediate value.
+Enumerate all 1,820 sorted four-number multisets from `1–13`, including
+repeated values, and retain every combination the exact solver can resolve.
+Generate this complete bank once at module initialization; never search again
+during React rendering. There are no difficulty labels or filters: every
+solvable combination participates in one random pool.
 
 The solver should enumerate unordered operand pairs, both operand orders where
 needed, and all legal operations. Deduplicate equivalent rational states and
-canonicalize commutative expressions to control search size. Difficulty labels
-must be derived from explicit solution metrics, not UI guesswork.
+canonicalize commutative expressions to control search size.
 
 ## Architecture and files
 
@@ -114,12 +110,8 @@ math, parser, or animation dependency.
 
 ## Persistence contract
 
-Persist preferences and aggregate records under `twenty-four:v1`:
-
-- selected difficulty and sound preference;
-- completed and assisted counts by difficulty;
-- current and best unassisted streak;
-- best unassisted completion time by difficulty.
+Persist only the sound preference under `twenty-four:v1`. Do not store puzzle
+state, completion counts, assisted counts, best times, streaks, or difficulty.
 
 Do not restore an unfinished expression tree in the first release. Validate
 the complete stored shape, tolerate unavailable or malformed local storage,
@@ -140,8 +132,7 @@ factors, exact equality, all operations, and division by zero.
 
 Create a pure recursive solver that returns structured expression trees rather
 than executable strings. Add solution evaluation and source-number accounting
-so a malformed expression cannot be accepted. Expose solution metrics needed
-for difficulty classification.
+so a malformed expression cannot be accepted.
 
 **Verify**: known solvable puzzles such as `3,3,8,8` resolve exactly; known
 unsolvable tuples return no solution; repeated numbers retain multiplicity;
@@ -149,9 +140,9 @@ every returned expression evaluates to 24 and consumes all four inputs.
 
 ### Step 3: Create the puzzle bank
 
-Add representative puzzles for all three difficulties. Validate the entire
-bank in tests: unique sorted keys, valid range, four operands, at least one
-solution, and classification consistent with the declared difficulty.
+Enumerate all 1,820 sorted combinations and retain all 1,362 solvable ones.
+Validate the entire bank in tests: unique sorted keys, valid range, four
+operands, and at least one solution.
 
 **Verify**: `pnpm test --run src/games/twenty-four/domain` passes without
 random or time-dependent assertions.
@@ -160,17 +151,17 @@ random or time-dependent assertions.
 
 Represent cards with stable IDs, exact values, expression trees, and source
 IDs. Model first-card/operator/second-card selection, combination, undo stack,
-reset, hint usage, completion, next puzzle, and round IDs as explicit actions.
+completion, next puzzle, and round IDs as explicit actions.
 Reject stale or invalid actions without mutating state.
 
 **Verify**: reducer tests cover every operator, operand order, repeated
-numbers, divide-by-zero rejection, multi-step undo, reset, assisted state,
-successful completion, and next-round reset.
+numbers, divide-by-zero rejection, multi-step undo, successful completion, and
+next-round reset.
 
 ### Step 5: Build accessible components and visual system
 
 Create a focused header, puzzle workspace, operand cards, operator dock,
-expression/history area, match statistics, help dialog, hint/solution dialog,
+expression/history area, help dialog, hint/solution dialog,
 and completion dialog. Use code-native CSS/SVG artwork for the catalog card.
 Keep motion limited to selection, combination, and successful completion so
 the arithmetic remains readable.
@@ -180,13 +171,13 @@ roles, exercises undo/reset, opens dialogs, and confirms focus restoration.
 
 ### Step 6: Add storage and optional audio
 
-Implement defensive versioned storage and a route-owned Web Audio manager.
+Implement defensive sound-preference storage and a route-owned Web Audio manager.
 Use concise cues for selection, combination, invalid operation, success, and
 button actions. Audio initializes only after user interaction and failures
 must never block gameplay.
 
 **Verify**: storage and audio tests cover unavailable browser APIs, malformed
-payloads, mute behavior, and result recording with/without assistance.
+payloads, and mute behavior. Confirm no gameplay record is persisted.
 
 ### Step 7: Integrate route and catalog
 
@@ -208,11 +199,11 @@ production build.
 ## Done criteria
 
 - [x] Rational arithmetic is exact and fully tested.
-- [x] Every bundled puzzle is solver-verified and correctly classified.
+- [x] Every solvable combination is included and solver-verified.
 - [x] Players can complete a round using pointer, touch, or keyboard.
-- [x] Undo, reset, hints, answers, completion, and next-puzzle flows work.
-- [x] Assisted rounds do not increase the unassisted streak.
-- [x] Versioned preferences and statistics survive refresh safely.
+- [x] Undo, hints, answers, completion, and next-puzzle flows work.
+- [x] No completion, assistance, difficulty, time, or streak records exist.
+- [x] The sound preference survives refresh safely.
 - [x] The route and catalog entry remain server-safe and statically generated.
 - [x] Game CSS and portal styles do not leak into other routes.
 - [x] `pnpm check` exits successfully.
@@ -221,9 +212,6 @@ production build.
 ## STOP conditions
 
 - The current catalog or route architecture conflicts with the paths above.
-- Exact solver validation reveals the proposed difficulty rules cannot produce
-  a useful minimum bank for all three levels; revise and document the metrics
-  before building UI around them.
 - A requested interaction requires arbitrary expression parsing or another
   scope expansion not covered by this plan.
 - Implementing the game appears to require a new runtime dependency; report

@@ -1,27 +1,17 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { defaultData, readData, recordCompletion, writeData } from "./storage";
+import { defaultSettings, readSettings, writeSettings } from "./storage";
 
-describe("24 Point persistence", () => {
+describe("24 Point settings", () => {
   afterEach(() => localStorage.clear());
 
-  it("round-trips preferences", () => {
-    const stored = { ...defaultData, difficulty: "hard" as const };
-    writeData(stored);
-    expect(readData()).toEqual(stored);
+  it("persists only the sound preference", () => {
+    writeSettings({ soundEnabled: false });
+    expect(readSettings()).toEqual({ soundEnabled: false });
+    expect(localStorage.getItem("twenty-four:v1")).not.toContain("completed");
   });
 
   it("falls back when storage is malformed", () => {
     localStorage.setItem("twenty-four:v1", "not-json");
-    expect(readData()).toEqual(defaultData);
-  });
-
-  it("records standard and assisted completions differently", () => {
-    const standard = recordCompletion(defaultData, "normal", false, 9000);
-    expect(standard.streak).toBe(1);
-    expect(standard.records.normal.bestTimeMs).toBe(9000);
-    const assisted = recordCompletion(standard, "normal", true, 2000);
-    expect(assisted.streak).toBe(0);
-    expect(assisted.records.normal.assisted).toBe(1);
-    expect(assisted.records.normal.bestTimeMs).toBe(9000);
+    expect(readSettings()).toEqual(defaultSettings);
   });
 });

@@ -1,4 +1,3 @@
-export type Difficulty = "easy" | "normal" | "hard";
 export type Operator = "add" | "subtract" | "multiply" | "divide";
 
 export interface Rational {
@@ -23,8 +22,8 @@ export type Expression = NumberExpression | OperationExpression;
 
 export interface Puzzle {
   readonly id: string;
-  readonly difficulty: Difficulty;
   readonly numbers: readonly [number, number, number, number];
+  readonly solution: Solution;
 }
 
 export interface Solution {

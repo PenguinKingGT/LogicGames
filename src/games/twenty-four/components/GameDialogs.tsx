@@ -65,7 +65,7 @@ export function HintDialog({ open, solution, onOpenChange }: HintDialogProps) {
       title="一种可行解"
       onOpenChange={onOpenChange}
     >
-      <DialogDescription>查看提示后，本题会记为辅助完成。</DialogDescription>
+      <DialogDescription>下面是一种可行算法。</DialogDescription>
       <code>{solution} = 24</code>
     </InformationalDialog>
   );
@@ -73,15 +73,10 @@ export function HintDialog({ open, solution, onOpenChange }: HintDialogProps) {
 
 interface CompletionDialogProps {
   readonly open: boolean;
-  readonly assisted: boolean;
   readonly onNext: () => void;
 }
 
-export function CompletionDialog({
-  open,
-  assisted,
-  onNext,
-}: CompletionDialogProps) {
+export function CompletionDialog({ open, onNext }: CompletionDialogProps) {
   return (
     <Dialog open={open}>
       <DialogContent className="twenty-four-dialog twenty-four-complete">
@@ -89,7 +84,7 @@ export function CompletionDialog({
         <strong aria-hidden="true">24</strong>
         <DialogTitle>计算成立</DialogTitle>
         <DialogDescription>
-          {assisted ? "本题记为辅助完成。" : "未使用提示，连胜已记录。"}
+          你已经用完四个数字，并精确得到 24。
         </DialogDescription>
         <button
           type="button"

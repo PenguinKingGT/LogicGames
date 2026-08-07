@@ -55,7 +55,7 @@
   .twenty-four-header {
     min-height: 94px;
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 1fr auto;
     align-items: center;
     gap: 18px;
     padding: 16px 20px;
@@ -63,7 +63,6 @@
   }
 
   .twenty-four-title span,
-  .twenty-four-ledger > span,
   .twenty-four-dialog > span {
     color: var(--tf-accent);
     font:
@@ -77,28 +76,6 @@
     font-size: clamp(32px, 4vw, 48px);
     line-height: 0.9;
     letter-spacing: -0.08em;
-  }
-
-  .twenty-four-difficulty {
-    display: flex;
-    padding: 3px;
-    border: 1px solid var(--tf-line);
-  }
-
-  .twenty-four-difficulty button {
-    min-height: 38px;
-    padding: 0 14px;
-    border: 0;
-    background: transparent;
-    color: var(--tf-muted);
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  .twenty-four-difficulty button[aria-pressed="true"] {
-    background: var(--tf-ink);
-    color: var(--tf-paper);
   }
 
   .twenty-four-tools {
@@ -134,9 +111,6 @@
 
   .twenty-four-stage {
     min-height: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 230px;
-    align-items: stretch;
   }
 
   .twenty-four-workspace {
@@ -284,43 +258,6 @@
     text-align: center;
   }
 
-  .twenty-four-ledger {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    padding: 32px 24px;
-    border-left: 1px solid var(--tf-line);
-    background: var(--tf-ink);
-    color: var(--tf-paper);
-  }
-
-  .twenty-four-ledger div {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    padding: 24px 0;
-    border-bottom: 1px solid #424548;
-  }
-
-  .twenty-four-ledger small {
-    color: #aeb0ad;
-    font-size: 12px;
-  }
-
-  .twenty-four-ledger strong {
-    font:
-      650 36px/0.9 var(--font-geist-mono),
-      monospace;
-  }
-
-  .twenty-four-ledger p {
-    margin: auto 0 0;
-    color: #aeb0ad;
-    font:
-      550 11px/1.8 var(--font-geist-mono),
-      monospace;
-  }
-
   .twenty-four-dialog-layer {
     position: fixed;
     z-index: 30;
@@ -408,43 +345,6 @@
     grid-template-columns: 1fr auto;
   }
 
-  .twenty-four-game .twenty-four-difficulty {
-    order: 3;
-    grid-column: 1/-1;
-  }
-
-  .twenty-four-game .twenty-four-difficulty button {
-    flex: 1;
-  }
-
-  .twenty-four-game .twenty-four-stage {
-    grid-template-columns: 1fr;
-  }
-
-  .twenty-four-game .twenty-four-ledger {
-    order: -1;
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    align-items: center;
-    gap: 18px;
-    padding: 16px 20px;
-    border-left: 0;
-  }
-
-  .twenty-four-game .twenty-four-ledger div {
-    gap: 10px;
-    padding: 0;
-    border: 0;
-  }
-
-  .twenty-four-game .twenty-four-ledger strong {
-    font-size: 25px;
-  }
-
-  .twenty-four-game .twenty-four-ledger p {
-    display: none;
-  }
-
   .twenty-four-game .twenty-four-workspace {
     min-height: 520px;
     padding: 64px 24px 34px;
@@ -489,14 +389,6 @@
 
   .twenty-four-game .twenty-four-number-card strong {
     font-size: 36px;
-  }
-
-  .twenty-four-game .twenty-four-ledger {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .twenty-four-game .twenty-four-ledger > span {
-    display: none;
   }
 }
 

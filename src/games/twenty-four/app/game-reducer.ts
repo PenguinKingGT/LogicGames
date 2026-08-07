@@ -1,12 +1,6 @@
 import { applyOperator, formatExpression } from "../domain/solver";
 import { equals, rational } from "../domain/rational";
-import type {
-  Difficulty,
-  Expression,
-  Operator,
-  Puzzle,
-  Rational,
-} from "../domain/types";
+import type { Expression, Operator, Puzzle, Rational } from "../domain/types";
 
 export interface ExpressionCard {
   readonly id: string;
@@ -21,49 +15,32 @@ interface RoundSnapshot {
 }
 
 export interface GameState {
-  readonly difficulty: Difficulty;
   readonly puzzle: Puzzle;
   readonly cards: readonly ExpressionCard[];
   readonly selectedCardId: string | null;
   readonly selectedOperator: Operator | null;
   readonly history: readonly RoundSnapshot[];
-  readonly assisted: boolean;
   readonly completed: boolean;
   readonly message: string;
-  readonly startedAt: number;
 }
 
 export type GameAction =
   | { readonly type: "select-card"; readonly cardId: string }
   | { readonly type: "select-operator"; readonly operator: Operator }
   | { readonly type: "undo" }
-  | { readonly type: "reset" }
-  | { readonly type: "use-assistance" }
-  | {
-      readonly type: "new-puzzle";
-      readonly puzzle: Puzzle;
-      readonly difficulty: Difficulty;
-      readonly startedAt: number;
-    };
+  | { readonly type: "new-puzzle"; readonly puzzle: Puzzle };
 
 const TARGET = rational(24);
 
-export function createGameState(
-  puzzle: Puzzle,
-  difficulty: Difficulty = puzzle.difficulty,
-  startedAt = Date.now(),
-): GameState {
+export function createGameState(puzzle: Puzzle): GameState {
   return {
-    difficulty,
     puzzle,
     cards: createCards(puzzle),
     selectedCardId: null,
     selectedOperator: null,
     history: [],
-    assisted: false,
     completed: false,
     message: "选择一个数字开始计算",
-    startedAt,
   };
 }
 
@@ -75,16 +52,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return selectOperator(state, action.operator);
     case "undo":
       return undo(state);
-    case "reset":
-      return reset(state);
-    case "use-assistance":
-      return { ...state, assisted: true };
     case "new-puzzle":
-      return createGameState(
-        action.puzzle,
-        action.difficulty,
-        action.startedAt,
-      );
+      return createGameState(action.puzzle);
   }
 }
 
@@ -191,18 +160,6 @@ function undo(state: GameState): GameState {
     history: state.history.slice(0, -1),
     completed: false,
     message: "已撤销上一步",
-  };
-}
-
-function reset(state: GameState): GameState {
-  return {
-    ...state,
-    cards: createCards(state.puzzle),
-    selectedCardId: null,
-    selectedOperator: null,
-    history: [],
-    completed: false,
-    message: "本题已重置",
   };
 }
 

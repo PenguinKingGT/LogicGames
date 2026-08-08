@@ -58,5 +58,11 @@ describe("home menu", () => {
     expect(
       screen.getByRole("link", { name: "在新标签页打开迷宫" }),
     ).toHaveAttribute("target", "_blank");
+    expect(
+      screen.getByRole("link", { name: "在新标签页打开四子棋" }),
+    ).toHaveAttribute("href", "/games/connect-four");
+    expect(
+      screen.getByRole("link", { name: "在新标签页打开四子棋" }),
+    ).toHaveAttribute("target", "_blank");
   });
 });

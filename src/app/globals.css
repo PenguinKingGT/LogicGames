@@ -528,6 +528,45 @@ input {
   box-shadow: none;
 }
 
+.game-card-connect-four {
+  color: #eef1ef;
+  background: #173246;
+}
+
+.game-card-connect-four .game-card-art {
+  background: rgb(255 255 255 / 5%);
+}
+
+.connect-four-card-board {
+  width: 76%;
+  aspect-ratio: 6 / 5;
+  position: absolute;
+  right: 12%;
+  bottom: 14%;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  padding: 8px;
+  border: 2px solid #102736;
+  background: #244b68;
+  box-shadow: 7px 7px 0 rgb(0 0 0 / 18%);
+}
+
+.connect-four-card-board span {
+  aspect-ratio: 1;
+  border: 1px solid rgb(16 39 54 / 76%);
+  border-radius: 50%;
+  background: #e9e7df;
+}
+
+.connect-four-card-board span[data-player="red"] {
+  background: #c84d43;
+}
+
+.connect-four-card-board span[data-player="yellow"] {
+  background: #e0b843;
+}
+
 .game-route-shell {
   min-height: 100dvh;
   background: var(--site-background);

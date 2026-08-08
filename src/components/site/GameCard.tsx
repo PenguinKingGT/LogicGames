@@ -122,5 +122,22 @@ function GameCardArt({ art }: { art: Game["art"] }) {
           <i className="maze-card-exit">E</i>
         </div>
       );
+    case "connect-four":
+      return (
+        <div className="connect-four-card-board">
+          {Array.from({ length: 30 }, (_, index) => (
+            <span
+              key={index}
+              data-player={
+                [21, 22, 23, 24].includes(index)
+                  ? "red"
+                  : [15, 16, 17, 25].includes(index)
+                    ? "yellow"
+                    : undefined
+              }
+            />
+          ))}
+        </div>
+      );
   }
 }

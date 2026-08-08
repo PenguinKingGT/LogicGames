@@ -36,6 +36,9 @@ written, so there is no target commit SHA. The source snapshots are:
 /games/maze               one DOM-based Client Component navigation game
                                   |
                                   +-- pure generator guarantees a connected perfect maze
+/games/connect-four       one DOM-based Client Component strategy game
+                                  |
+                                  +-- route-owned Worker runs deterministic AI search
 ```
 
 Application-owned code lives under `src/`; migrated game code is namespaced
@@ -58,6 +61,7 @@ boundaries.
 | 008  | Add a complete human-versus-AI Othello game                | P1       | L      | 007        | DONE        |
 | 009  | Add a complete 24 Point arithmetic game                    | P2       | M      | 008        | DONE        |
 | 010  | Add a complete random maze navigation game                 | P2       | M      | 009        | DONE        |
+| 011  | Add a human-versus-AI Connect Four game                    | P2       | M      | 010        | DONE        |
 
 Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 `REJECTED (<reason>)`.
@@ -90,6 +94,9 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
 - 010 adds a random navigation game. The perfect-maze generator and movement
   rules must land before reducer and input integration so keyboard and touch
   input share one validated rule source.
+- 011 adds a second adversarial strategy game. Gravity and line detection must
+  land before deterministic AI search; reducer lifecycle and stale-result
+  protection must land before Worker/UI integration.
 
 ## Architectural decisions
 
@@ -127,6 +134,9 @@ Status values: `TODO`, `IN PROGRESS`, `DONE`, `BLOCKED (<reason>)`, or
   movement engine. Keep the full maze visible, offer standard and complex grid
   sizes, and omit fog, move/time limits, daily seeds, hints, scoring, and
   persistence.
+- Implement Connect Four as an accessible DOM grid backed by a pure gravity and
+  line-detection engine. Keep standard/hard AI in a route-owned Worker and omit
+  timers, records, persistence, online play, and variable board sizes.
 - Isolate game CSS and CSS variables by a game root namespace. A game may not
   assign its palette globally on `:root`, `html`, or `body`.
 - Do not enable `output: "export"` until a deployment target requires it. The

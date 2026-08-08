@@ -55,6 +55,13 @@ export const games = [
     href: "/games/maze",
     art: "maze",
   },
+  {
+    slug: "connect-four",
+    title: "四子棋",
+    englishTitle: "Connect Four",
+    href: "/games/connect-four",
+    art: "connect-four",
+  },
 ] as const;
 
 export type Game = (typeof games)[number];
